@@ -1,0 +1,21 @@
+.body-content-services {
+  gap: 0;
+}
+.body-section-title {
+  margin-bottom: 20px;
+}
+
+.body-section {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+.search-field-container {
+  background-color: white;
+  height: 39px; /* Adjust the height as needed */
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}

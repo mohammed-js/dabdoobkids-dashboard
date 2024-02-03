@@ -1,0 +1,204 @@
+:root {
+  --transparent: rgba(0, 0, 0, 0);
+  --white: #ffffff;
+  --dr-white: #fafafa;
+  --black: #000000;
+  --errie-black: #1b1b1b;
+  --rhine-castle: #5f5f5f;
+  --brown: #ad6b46;
+  --off-white: #fff9f0;
+  --light-grey: #f7f7f7;
+  --pale-grey: #ededed;
+  --dark-grey: #767676;
+  --darkest-grey: #494949;
+  --grey-text: #1b1b1bb2;
+  --orange: #f9cc61;
+  --line: #a4a4a4;
+  --dark-charcoal: #323232;
+  --unicorn-silver: #e8e8e8;
+  --dreamy-cloud: #e5e7eb;
+  --placeholder-text: #8d8d8d;
+  --error: #f04438;
+  --heavy-blue-grey: #a0a8b0;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  font-family: "Almarai", sans-serif !important;
+  font-size: 15px;
+}
+
+td,
+th {
+  max-width: 100px !important;
+}
+th {
+  white-space: nowrap !important;
+}
+td {
+  word-wrap: break-word;
+}
+
+table {
+  width: initial !important;
+}
+
+.content-container {
+  overflow: hidden;
+}
+body {
+  /* background-color: #cee9fb; */
+  margin-bottom: 100px;
+}
+.container {
+  margin-left: 20px;
+  margin-right: 20px;
+}
+.navbar-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.navbar-sub-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+.body-container {
+  display: flex;
+  /* gap: 10px; */
+  width: 100%;
+}
+.body-sidebar {
+  width: 220px;
+}
+.content-container {
+  width: 100%;
+  padding: 30px;
+}
+.card {
+  padding: 10px;
+  background-color: #ffffff;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+  border-radius: 5px;
+}
+.scale {
+  transition: all 0.5s ease-in-out;
+}
+.scale:hover {
+  transform: scale(1.05);
+  cursor: pointer;
+}
+
+.card-column {
+  padding: 10px;
+  background-color: #ffffff;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+@media only screen and (max-width: 600px) {
+  .navbar-container img {
+    display: none;
+  }
+  .body-sidebar {
+    display: none;
+  }
+  .my-swiper {
+    flex-basis: 100%; /* Full width on screens narrower than 768px */
+  }
+  .body-section-b {
+    flex-direction: column;
+  }
+  .card-column {
+    width: 100% !important;
+  }
+  .body-section-d-title {
+    text-align: center;
+  }
+  .body-section-d {
+    justify-content: center;
+  }
+  .body-section-c {
+    flex-wrap: wrap;
+  }
+}
+@media only screen and (min-width: 600px) {
+  .navbar-container .burger-menu {
+    display: none;
+  }
+}
+
+.MuiPickersArrowSwitcher-root {
+  direction: ltr !important;
+}
+
+/* ZoomImage.css */
+
+.zoomable-image {
+  cursor: zoom-in;
+  transition: cursor 0.5s ease;
+
+  &:hover {
+    cursor: zoom-out;
+  }
+
+  /* Set different cursor styles based on the zoom level */
+  &.zoomed-in {
+    cursor: zoom-out;
+  }
+
+  &.zoomed-out {
+    cursor: zoom-in;
+  }
+}
+
+/* **** */
+::-webkit-scrollbar {
+  width: 4px !important; /* Set to zero for hiding the scrollbar */
+  height: 8px !important; /* Set to zero for hiding the scrollbar */
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #ad6b46; /* You can set a color for the thumb */
+}
+
+::-webkit-scrollbar-track {
+  background-color: #e5e7eb; /* You can set a color for the track */
+}
+
+/* formik */
+
+.error {
+  color: var(--error);
+  font-size: 0.75rem;
+  text-align: left;
+  /* margin-top: 0.25rem; */
+}
+
+input:focus,
+select:focus {
+  border-color: #4299e1 !important;
+}
+
+input.input-error,
+select.input-error,
+.error-pick {
+  border: 1px solid var(--error);
+  /* margin-bottom: 0; */
+}
+
+button:disabled {
+  opacity: 0.35;
+}

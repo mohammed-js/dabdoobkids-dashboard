@@ -1,0 +1,13 @@
+.about-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.about-title {
+  font-weight: bold;
+  font-size: 25px;
+}
+.about-body {
+  font-size: 20px;
+  line-height: 2;
+}
