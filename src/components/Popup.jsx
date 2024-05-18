@@ -43,6 +43,25 @@ export default function Popup({
             currentId={currentId}
           />
         )}
+        {type === "product_variant_create" && (
+          <Form
+            type="product_variant_create"
+            setOpen={setOpen}
+            setForceUpdate={setForceUpdate}
+            setData={setData}
+            setIsLoading={setIsLoading}
+          />
+        )}
+        {type === "product_variant_update" && (
+          <Form
+            type="product_variant_update"
+            setOpen={setOpen}
+            setForceUpdate={setForceUpdate}
+            setData={setData}
+            setIsLoading={setIsLoading}
+            currentId={currentId}
+          />
+        )}
         {type === "collection_create" && (
           <Form
             type="collection_create"

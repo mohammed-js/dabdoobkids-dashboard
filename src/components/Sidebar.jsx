@@ -33,6 +33,11 @@ const Sidebar = () => {
     },
     {
       icon: faHouse,
+      text: { en: "Product Variants", ar: "متغيرات المنتج" },
+      path: "/products-variants",
+    },
+    {
+      icon: faHouse,
       text: { en: "Categories", ar: "التصنيفات" },
       path: "/categories",
     },

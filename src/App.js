@@ -7,6 +7,7 @@ import {
   useLocation,
 } from "react-router-dom";
 import Products from "./pages/Products.jsx";
+import ProductsVariants from "./pages/ProductsVariants.jsx";
 import Categories from "./pages/Categories.jsx";
 import SubCategories from "./pages/SubCategories.jsx";
 import Brands from "./pages/Brands.jsx";
@@ -42,6 +43,7 @@ function App() {
             <Routes>
               <Route path="/login" element={<Login />} />
               <Route path="/products" element={<Products />} />
+              <Route path="/products-variants" element={<ProductsVariants />} />
               <Route path="/categories" element={<Categories />} />
               <Route path="/sub-categories" element={<SubCategories />} />
               <Route path="/brands" element={<Brands />} />

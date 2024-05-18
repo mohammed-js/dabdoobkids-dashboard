@@ -46,7 +46,6 @@ export default function SubCategories() {
     instance
       .delete(`subcategories/${currentId}`)
       .then((response) => {
-        console.log(response);
         setData([]);
         setForceUpdate((prev) => !prev);
       })
@@ -71,8 +70,7 @@ export default function SubCategories() {
           },
         })
         .then((response) => {
-          console.log(response.data.data);
-          setData(response.data.data);
+          setData(response.data.data.categories);
           setTotalPages(response.data.data.metadata.totalPages);
           setIsLoading(false);
         })

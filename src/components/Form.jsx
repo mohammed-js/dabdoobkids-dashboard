@@ -15,6 +15,14 @@ import {
   updateProductInitialValues,
 } from "../utils/schemas/updateProduct.js";
 import {
+  createProductVariant,
+  createProductVariantInitialValues,
+} from "../utils/schemas/createProductVariant.js";
+import {
+  updateProductVariant,
+  updateProductVariantInitialValues,
+} from "../utils/schemas/updateProductVariant.js";
+import {
   createCategory,
   createCategoryInitialValues,
 } from "../utils/schemas/createCategory.js";
@@ -92,7 +100,9 @@ export default function Form({
   const [customColors, setCustomColors] = useState([]);
   const [currentColor, setCurrentColor] = useState([]);
   // const [currentItem, setCurrentItem] = useState("");
+  const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [subcategories, setSubcategories] = useState([]);
   const [brands, setBrands] = useState([]);
 
   const sizes = ["sm", "m", "l", "xl", "xxl", "xxxl"];
@@ -183,6 +193,39 @@ export default function Form({
           sizes: values.sizes,
           brand: values.brand,
           category: values.category,
+          subcategory: values.subcategory,
+          images: values.images,
+          stock: values.stock,
+          price: values.price,
+          oldPrice: values.oldPrice,
+          metaRobot: ["string"],
+          metaDescription: "string",
+          barcode: values.barcode,
+          productReference: values.productReference,
+          extraInfo: {
+            new: values.new,
+            sold: values.sold,
+            sale: values.sale,
+          },
+        };
+        method = "post";
+        break;
+      case "product_update":
+        endpoint = `/products/${currentId}`;
+        body = {
+          name: {
+            en: values.nameEn,
+            ar: values.nameAr,
+          },
+          description: {
+            en: values.descriptionEn,
+            ar: values.descriptionAr,
+          },
+          isActive: values.isActive,
+          colors: values.colors,
+          sizes: values.sizes,
+          brand: values.brand,
+          category: values.category,
           images: values.images,
           stock: values.stock,
           price: values.price,
@@ -195,9 +238,31 @@ export default function Form({
             sale: values.sale,
           },
         };
+        method = "put";
+        break;
+      case "product_variant_create":
+        endpoint = `/products/${values.product}/variant`;
+        body = {
+          color: values.color,
+          size: values.size,
+          images: values.images,
+          stock: values.stock,
+          price: values.price,
+          oldPrice: values.oldPrice,
+          metaRobot: ["string"],
+          metaDescription: "string",
+          barcode: values.barcode,
+          productReference: values.productReference,
+          isActive: values.isActive,
+          extraInfo: {
+            new: values.new,
+            sold: values.sold,
+            sale: values.sale,
+          },
+        };
         method = "post";
         break;
-      case "product_update":
+      case "product_variant_update":
         endpoint = `/products/${currentId}`;
         body = {
           name: {
@@ -284,7 +349,7 @@ export default function Form({
         method = "put";
         break;
       case "subcategory_create":
-        endpoint = "/categories";
+        endpoint = "/subcategories";
         body = {
           name: {
             en: values.nameEn,
@@ -297,7 +362,7 @@ export default function Form({
         method = "post";
         break;
       case "subcategory_update":
-        endpoint = `/categories/${currentId}`;
+        endpoint = `/subcategories/${currentId}`;
         body = {
           name: {
             en: values.nameEn,
@@ -407,10 +472,14 @@ export default function Form({
         if (
           type === "product_create" ||
           type === "product_update" ||
+          type === "product_variant_create" ||
+          type === "product_variant_update" ||
           type === "collection_create" ||
           type === "collection_update" ||
           type === "category_create" ||
           type === "category_update" ||
+          type === "subcategory_create" ||
+          type === "subcategory_update" ||
           type === "brand_create" ||
           type === "brand_update" ||
           type === "user_create" ||
@@ -453,6 +522,14 @@ export default function Form({
     case "product_update":
       initialValues = updateProductInitialValues;
       schema = updateProduct;
+      break;
+    case "product_variant_create":
+      initialValues = createProductVariantInitialValues;
+      schema = createProductVariant;
+      break;
+    case "product_variant_update":
+      initialValues = updateProductVariantInitialValues;
+      schema = updateProductVariant;
       break;
     case "collection_create":
       initialValues = createCollectionInitialValues;
@@ -597,6 +674,42 @@ export default function Form({
             console.error("API Error:", error);
           });
       }
+      if (type === "product_variant_update") {
+        instance
+          .get(`products/${currentId}`, {
+            params: {
+              // all: true,
+            },
+          })
+          .then((response) => {
+            const res = response.data.data;
+            console.log(response.data.data);
+            setCustomColors(res.colors);
+            // setCurrentItem(response.data.data);
+            setFieldValue("nameEn", res.name);
+            setFieldValue("nameAr", res.name);
+            setFieldValue("descriptionEn", res.description);
+            setFieldValue("descriptionAr", res.description);
+            setFieldValue("brand", res.brand.id);
+            setFieldValue("category", res.category.id);
+            setFieldValue("images", res.images);
+            setFieldValue("isActive", true);
+            setFieldValue("colors", res.colors);
+            setFieldValue("sizes", res.sizes);
+            setFieldValue("stock", res.stock);
+            setFieldValue("price", res.price);
+            setFieldValue("oldPrice", res.oldPrice);
+            setFieldValue("new", res.extraInfo.new);
+            setFieldValue("sold", res.extraInfo.sold);
+            setFieldValue("sale", res.extraInfo.sale);
+            console.log(values);
+            console.log(errors);
+            //
+          })
+          .catch((error) => {
+            console.error("API Error:", error);
+          });
+      }
       if (type === "collection_update") {
         instance
           .get(`collections/${currentId}`, {
@@ -704,15 +817,33 @@ export default function Form({
     if (
       type == "product_create" ||
       type == "product_update" ||
+      type == "product_variant_create" ||
+      type == "product_variant_update" ||
       type == "subcategory_create" ||
       type == "subcategory_update"
     ) {
+      instance
+        .get("/products", {
+          // params: { page: 1 },
+        })
+        .then((response) => {
+          setProducts(response.data.data.products);
+        })
+        .catch((error) => {});
       instance
         .get("/categories", {
           // params: { page: 1 },
         })
         .then((response) => {
           setCategories(response.data.data.categories);
+        })
+        .catch((error) => {});
+      instance
+        .get("/subcategories", {
+          // params: { page: 1 },
+        })
+        .then((response) => {
+          setSubcategories(response.data.data.categories);
         })
         .catch((error) => {});
       instance
@@ -923,8 +1054,37 @@ export default function Form({
               <MenuItem value={category.id}>{category.name}</MenuItem>
             ))}
           </Select>
-          {/* colors */}
+          {/* subcategory */}
           <div className={styles.label}>
+            <span>Subcategory</span>
+            <span className={styles.error}> *</span>
+            {errors.subcategory && touched.subcategory && (
+              <span className="error">{errors.subcategory}</span>
+            )}
+          </div>
+          <Select
+            size="small"
+            labelId="demo-select-small-label"
+            id="demo-select-small"
+            value={values.subcategory}
+            onChange={(e) => {
+              console.log(e.target.value);
+              setFieldValue("subcategory", e.target.value);
+            }}
+            className={
+              errors.subcategory && touched.subcategory ? `error-pick` : ``
+            }
+            sx={{ borderRadius: "8px" }}
+          >
+            <MenuItem value="">
+              <em>None</em>
+            </MenuItem>
+            {subcategories.map((subcategory) => (
+              <MenuItem value={subcategory.id}>{subcategory.name}</MenuItem>
+            ))}
+          </Select>
+          {/* colors */}
+          {/* <div className={styles.label}>
             <span>Pick colors</span>
             <span className={styles.error}> *</span>
             {errors.colors && touched.colors && (
@@ -944,6 +1104,474 @@ export default function Form({
               className={
                 errors.colors && touched.colors
                   ? `${styles.input} input-error`
+                  : `${styles.input}`
+              }
+            ></input>
+            <button
+              type="button"
+              disabled={currentColor.length != 7}
+              onClick={() => {
+                setCustomColors((prev) => [...prev, currentColor]);
+                setFieldValue("colors", [...customColors, currentColor]);
+              }}
+              style={{
+                height: "100%",
+                padding: "5px",
+                borderRadius: "8px",
+                backgroundColor: "var(--brown)",
+                color: "var(--white)",
+                cursor: "pointer",
+              }}
+            >
+              Add
+            </button>
+            <div
+              style={{
+                // padding: "10px",
+                display: "flex",
+                flexWrap: "wrap",
+                gap: "5px",
+              }}
+            >
+              {customColors.map((item) => (
+                <div
+                  style={{
+                    width: "30px",
+                    height: "30px",
+                    borderRadius: "8px",
+                    backgroundColor: item,
+                    border: "1px solid black",
+                  }}
+                  onClick={() => {
+                    setCustomColors((prev) => {
+                      return prev.filter((color) => color !== item);
+                    });
+                    setFieldValue(
+                      "colors",
+                      customColors.filter((color) => color !== item)
+                    );
+                  }}
+                ></div>
+              ))}
+            </div>
+          </div> */}
+          {/* sizes */}
+          {/* <div className={styles.label}>
+            <span>Pick sizes</span>
+            <span className={styles.error}> *</span>
+            {errors.sizes && touched.sizes && (
+              <span className="error">{errors.sizes}</span>
+            )}
+          </div>
+          <FormControl size="small">
+            <InputLabel id="demo-multiple-name-label">Sizes</InputLabel>
+            <Select
+              className={
+                errors.sizes && touched.sizes ? "error-pick" : "initial"
+              }
+              sx={{ borderRadius: "8px" }}
+              labelId="demo-multiple-name-label"
+              id="demo-multiple-name"
+              multiple
+              value={values.sizes}
+              onChange={handleSelectChange}
+              input={<OutlinedInput label="Name" />}
+              MenuProps={MenuProps}
+            >
+              {sizes.map((size) => (
+                <MenuItem
+                  key={size}
+                  value={size}
+                  style={getStyles(size, values.sizes, theme)}
+                >
+                  {size}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl> */}
+          {/* stock */}
+          {/* <div className={styles.label}>
+            <span>Stock number</span>
+            <span className={styles.error}> *</span>
+            {errors.stock && touched.stock && (
+              <span className="error">{errors.stock}</span>
+            )}
+          </div>
+          <input
+            value={values.stock}
+            onChange={handleChange}
+            id="stock"
+            type="number"
+            onBlur={handleBlur}
+            className={
+              errors.stock && touched.stock
+                ? `${styles.input} ${styles.bottom_margin} input-error`
+                : `${styles.input} ${styles.bottom_margin}`
+            }
+            placeholder="Stock number"
+          ></input> */}
+          {/* price */}
+          {/* <div className={styles.label}>
+            <span>Price</span>
+            <span className={styles.error}> *</span>
+            {errors.price && touched.price && (
+              <span className="error">{errors.stock}</span>
+            )}
+          </div>
+          <input
+            value={values.price}
+            onChange={handleChange}
+            id="price"
+            type="number"
+            onBlur={handleBlur}
+            className={
+              errors.price && touched.price
+                ? `${styles.input} ${styles.bottom_margin} input-error`
+                : `${styles.input} ${styles.bottom_margin}`
+            }
+            placeholder="Price number"
+          ></input> */}
+          {/* old price */}
+          {/* <div className={styles.label}>
+            <span>Old price</span>
+            <span className={styles.error}> *</span>
+            {errors.oldPrice && touched.oldPrice && (
+              <span className="error">{errors.stock}</span>
+            )}
+          </div>
+          <input
+            value={values.oldPrice}
+            onChange={handleChange}
+            id="oldPrice"
+            type="number"
+            onBlur={handleBlur}
+            className={
+              errors.oldPrice && touched.oldPrice
+                ? `${styles.input} ${styles.bottom_margin} input-error`
+                : `${styles.input} ${styles.bottom_margin}`
+            }
+            placeholder="Old price number"
+          ></input> */}
+          {/* status */}
+          <div className={styles.label}>
+            <span>Active status</span>
+            <span className={styles.error}> *</span>
+            {errors.email && touched.email && (
+              <span className="error">{errors.email}</span>
+            )}
+          </div>
+          <Switch
+            checked={values.isActive}
+            onClick={(event) => {
+              console.log(event.target.checked);
+              setFieldValue("isActive", !values.isActive);
+            }}
+            id="isActive"
+            type="isActive"
+            // onBlur={handleBlur}
+            inputProps={{ "aria-label": "controlled" }}
+          />
+          {/* upload image*/}
+          <div className={styles.label}>
+            <span>Upload file</span>
+            <span className={styles.error}> *</span>
+            {errors.images && touched.images && (
+              <span className="error">{errors.images}</span>
+            )}
+          </div>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "5px",
+            }}
+          >
+            <label
+              style={{
+                opacity: isUploading ? ".3" : "initial",
+                pointerEvents: isUploading ? "none" : "initial",
+                cursor: isUploading ? "not-allowed" : "pointer",
+              }}
+            >
+              {/* <img src="/upload.png" width="30px" /> */}
+              <input
+                multiple
+                type="file"
+                name="file"
+                onChange={handleFileChange}
+                style={{ width: "180px" }}
+              />
+            </label>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              {isUploading && <CircularProgress size="20px" />}
+              {isUploaded && <CloudDoneIcon sx={{ color: "green" }} />}
+            </Box>
+          </div>
+          {/* barcode */}
+          <div className={styles.label}>
+            <span>Barcode</span>
+            <span className={styles.error}> *</span>
+            {errors.barcode && touched.barcode && (
+              <span className="error">{errors.barcode}</span>
+            )}
+          </div>
+          <input
+            value={values.barcode}
+            onChange={handleChange}
+            id="barcode"
+            onBlur={handleBlur}
+            className={
+              errors.barcode && touched.barcode
+                ? `${styles.input} ${styles.bottom_margin} input-error`
+                : `${styles.input} ${styles.bottom_margin}`
+            }
+            placeholder="Barcode"
+          ></input>
+          {/* productReference */}
+          <div className={styles.label}>
+            <span>ProductReference</span>
+            <span className={styles.error}> *</span>
+            {errors.productReference && touched.productReference && (
+              <span className="error">{errors.productReference}</span>
+            )}
+          </div>
+          <input
+            value={values.productReference}
+            onChange={handleChange}
+            id="productReference"
+            onBlur={handleBlur}
+            className={
+              errors.productReference && touched.productReference
+                ? `${styles.input} ${styles.bottom_margin} input-error`
+                : `${styles.input} ${styles.bottom_margin}`
+            }
+            placeholder="Product Reference"
+          ></input>
+          {/* new checkbox */}
+          <div style={{ display: "flex", gap: "5px", marginTop: "10px" }}>
+            <div className={styles.label}>
+              <span>New filter</span>
+              {errors.new && touched.new && (
+                <span className="error">{errors.new}</span>
+              )}
+            </div>
+            <input
+              id="new"
+              type="checkbox"
+              value={values.new}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              className={errors.new && touched.new ? "input-error" : ""}
+            />
+          </div>
+          {/* sold checkbox */}
+          <div style={{ display: "flex", gap: "5px", marginTop: "10px" }}>
+            <div className={styles.label}>
+              <span>Sold filter</span>
+              {errors.sold && touched.sold && (
+                <span className="error">{errors.sold}</span>
+              )}
+            </div>
+            <input
+              id="sold"
+              type="checkbox"
+              value={values.sold}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              className={errors.sold && touched.sold ? "input-error" : ""}
+            />
+          </div>
+          {/* sale checkbox */}
+          <div style={{ display: "flex", gap: "5px", marginTop: "10px" }}>
+            <div className={styles.label}>
+              <span>Sale filter</span>
+              {errors.sale && touched.sale && (
+                <span className="error">{errors.sale}</span>
+              )}
+            </div>
+            <input
+              id="sale"
+              type="checkbox"
+              value={values.sale}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              className={errors.sale && touched.sale ? "input-error" : ""}
+            />
+          </div>
+
+          <button className={styles.brown_button} type="submit">
+            Create
+          </button>
+        </>
+      )}
+      {type === "product_update" && (
+        <>
+          <div className={styles.title}>Create an Account</div>
+
+          {/* nameEn */}
+          <div className={styles.label}>
+            <span>English name</span>
+            <span className={styles.error}> *</span>
+            {errors.nameEn && touched.nameEn && (
+              <span className="error">{errors.nameEn}</span>
+            )}
+          </div>
+          <input
+            value={values.nameEn}
+            onChange={handleChange}
+            id="nameEn"
+            type="nameEn"
+            onBlur={handleBlur}
+            className={
+              errors.nameEn && touched.nameEn
+                ? `${styles.input} ${styles.bottom_margin} input-error`
+                : `${styles.input} ${styles.bottom_margin}`
+            }
+            placeholder="Your last name"
+          ></input>
+          {/* nameAr */}
+          <div className={styles.label}>
+            <span>Arabic name</span>
+            <span className={styles.error}> *</span>
+            {errors.nameAr && touched.nameAr && (
+              <span className="error">{errors.nameAr}</span>
+            )}
+          </div>
+          <input
+            value={values.nameAr}
+            onChange={handleChange}
+            id="nameAr"
+            type="nameAr"
+            onBlur={handleBlur}
+            className={
+              errors.nameAr && touched.nameAr
+                ? `${styles.input} ${styles.bottom_margin} input-error`
+                : `${styles.input} ${styles.bottom_margin}`
+            }
+            placeholder="Your last name"
+          ></input>
+          {/* descriptionEn */}
+          <div className={styles.label}>
+            <span>English description</span>
+            <span className={styles.error}> *</span>
+            {errors.descriptionEn && touched.descriptionEn && (
+              <span className="error">{errors.descriptionEn}</span>
+            )}
+          </div>
+          <input
+            value={values.descriptionEn}
+            onChange={handleChange}
+            id="descriptionEn"
+            type="descriptionEn"
+            onBlur={handleBlur}
+            className={
+              errors.descriptionEn && touched.descriptionEn
+                ? `${styles.input} ${styles.bottom_margin} input-error`
+                : `${styles.input} ${styles.bottom_margin}`
+            }
+            placeholder="Your last name"
+          ></input>
+          {/* descriptionAr */}
+          <div className={styles.label}>
+            <span>Arabic description</span>
+            <span className={styles.error}> *</span>
+            {errors.descriptionAr && touched.descriptionAr && (
+              <span className="error">{errors.descriptionAr}</span>
+            )}
+          </div>
+          <input
+            value={values.descriptionAr}
+            onChange={handleChange}
+            id="descriptionAr"
+            type="descriptionAr"
+            onBlur={handleBlur}
+            className={
+              errors.descriptionAr && touched.descriptionAr
+                ? `${styles.input} ${styles.bottom_margin} input-error`
+                : `${styles.input} ${styles.bottom_margin}`
+            }
+            placeholder="Your last name"
+          ></input>
+          {/* brand */}
+          <div className={styles.label}>
+            <span>Brand</span>
+            <span className={styles.error}> *</span>
+            {errors.brand && touched.brand && (
+              <span className="error">{errors.brand}</span>
+            )}
+          </div>
+          <Select
+            size="small"
+            labelId="demo-select-small-label"
+            id="demo-select-small"
+            value={values.brand}
+            onChange={(e) => {
+              setFieldValue("brand", e.target.value);
+            }}
+            className={errors.brand && touched.brand ? `error-pick` : ``}
+            sx={{ borderRadius: "8px" }}
+          >
+            <MenuItem value="">
+              <em>None</em>
+            </MenuItem>
+            {brands.map((brand) => (
+              <MenuItem value={brand.id}>{brand.name}</MenuItem>
+            ))}
+          </Select>
+          {/* category */}
+          <div className={styles.label}>
+            <span>Category</span>
+            <span className={styles.error}> *</span>
+            {errors.category && touched.category && (
+              <span className="error">{errors.category}</span>
+            )}
+          </div>
+          <Select
+            size="small"
+            labelId="demo-select-small-label"
+            id="demo-select-small"
+            value={values.category}
+            onChange={(e) => {
+              console.log(e.target.value);
+              setFieldValue("category", e.target.value);
+            }}
+            className={errors.category && touched.category ? `error-pick` : ``}
+            sx={{ borderRadius: "8px" }}
+          >
+            <MenuItem value="">
+              <em>None</em>
+            </MenuItem>
+            {categories.map((category) => (
+              <MenuItem value={category.id}>{category.name}</MenuItem>
+            ))}
+          </Select>
+          {/* colors */}
+          <div className={styles.label}>
+            <span>Pick colors</span>
+            <span className={styles.error}> *</span>
+            {errors.colors && touched.colors && (
+              <span className="error">{errors.colors}</span>
+            )}
+          </div>
+          <div
+            style={{ display: "flex", gap: "10px", alignItems: "flex-start" }}
+          >
+            <input
+              type="text"
+              value={currentColor}
+              onChange={(e) => {
+                setCurrentColor(e.target.value);
+              }}
+              style={{ width: "100px", fontSize: "15px" }}
+              className={
+                errors.email && touched.email
+                  ? `${styles.input} error-pick`
                   : `${styles.input}`
               }
             ></input>
@@ -1115,8 +1743,8 @@ export default function Form({
           <div className={styles.label}>
             <span>Upload file</span>
             <span className={styles.error}> *</span>
-            {errors.images && touched.images && (
-              <span className="error">{errors.images}</span>
+            {errors.imageId && touched.imageId && (
+              <span className="error">{errors.imageId}</span>
             )}
           </div>
           <div
@@ -1206,11 +1834,242 @@ export default function Form({
           </div>
 
           <button className={styles.brown_button} type="submit">
+            Update
+          </button>
+        </>
+      )}
+      {type === "product_variant_create" && (
+        <>
+          <div className={styles.title}>Create a product variant</div>
+
+          {/* products */}
+          <div className={styles.label}>
+            <span>Product</span>
+            <span className={styles.error}> *</span>
+            {errors.product && touched.product && (
+              <span className="error">{errors.product}</span>
+            )}
+          </div>
+          <Select
+            size="small"
+            labelId="demo-select-small-label"
+            id="demo-select-small"
+            value={values.product}
+            onChange={(e) => {
+              setFieldValue("product", e.target.value);
+            }}
+            className={errors.product && touched.product ? `error-pick` : ``}
+            sx={{ borderRadius: "8px" }}
+          >
+            <MenuItem value="">
+              <em>None</em>
+            </MenuItem>
+            {products.map((product) => (
+              <MenuItem value={product.id}>{product.name}</MenuItem>
+            ))}
+          </Select>
+          {/* color */}
+          <div className={styles.label}>
+            <span>Pick a color</span>
+            <span className={styles.error}> *</span>
+            {errors.color && touched.color && (
+              <span className="error">{errors.color}</span>
+            )}
+          </div>
+          <div
+            style={{ display: "flex", gap: "10px", alignItems: "flex-start" }}
+          >
+            <input
+              type="text"
+              value={values.color}
+              onChange={(e) => {
+                setFieldValue("color", e.target.value);
+              }}
+              style={{ width: "100px", fontSize: "15px" }}
+              className={
+                errors.colors && touched.colors
+                  ? `${styles.input} input-error`
+                  : `${styles.input}`
+              }
+            ></input>
+
+            <div
+              style={{
+                // padding: "10px",
+                display: "flex",
+                flexWrap: "wrap",
+                gap: "5px",
+              }}
+            >
+              <div
+                style={{
+                  width: "30px",
+                  height: "30px",
+                  borderRadius: "8px",
+                  backgroundColor: values.color,
+                  border: "1px solid black",
+                }}
+              ></div>
+            </div>
+          </div>
+          {/* size */}
+          <div className={styles.label}>
+            <span>Pick a size</span>
+            <span className={styles.error}> *</span>
+            {errors.size && touched.size && (
+              <span className="error">{errors.size}</span>
+            )}
+          </div>
+          <FormControl size="small">
+            <InputLabel id="demo-multiple-name-label">Sizes</InputLabel>
+            <Select
+              className={errors.size && touched.size ? "error-pick" : "initial"}
+              sx={{ borderRadius: "8px" }}
+              labelId="demo-multiple-name-label"
+              id="demo-multiple-name"
+              // multiple
+              value={values.size}
+              onChange={(e) => {
+                setFieldValue("size", e.target.value);
+              }}
+              input={<OutlinedInput label="Name" />}
+              MenuProps={MenuProps}
+            >
+              {sizes.map((size) => (
+                <MenuItem key={size} value={size}>
+                  {size}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          {/* stock */}
+          <div className={styles.label}>
+            <span>Stock number</span>
+            <span className={styles.error}> *</span>
+            {errors.stock && touched.stock && (
+              <span className="error">{errors.stock}</span>
+            )}
+          </div>
+          <input
+            value={values.stock}
+            onChange={handleChange}
+            id="stock"
+            type="number"
+            onBlur={handleBlur}
+            className={
+              errors.stock && touched.stock
+                ? `${styles.input} ${styles.bottom_margin} input-error`
+                : `${styles.input} ${styles.bottom_margin}`
+            }
+            placeholder="Stock number"
+          ></input>
+          {/* price */}
+          <div className={styles.label}>
+            <span>Price</span>
+            <span className={styles.error}> *</span>
+            {errors.price && touched.price && (
+              <span className="error">{errors.stock}</span>
+            )}
+          </div>
+          <input
+            value={values.price}
+            onChange={handleChange}
+            id="price"
+            type="number"
+            onBlur={handleBlur}
+            className={
+              errors.price && touched.price
+                ? `${styles.input} ${styles.bottom_margin} input-error`
+                : `${styles.input} ${styles.bottom_margin}`
+            }
+            placeholder="Price number"
+          ></input>
+          {/* old price */}
+          <div className={styles.label}>
+            <span>Old price</span>
+            <span className={styles.error}> *</span>
+            {errors.oldPrice && touched.oldPrice && (
+              <span className="error">{errors.stock}</span>
+            )}
+          </div>
+          <input
+            value={values.oldPrice}
+            onChange={handleChange}
+            id="oldPrice"
+            type="number"
+            onBlur={handleBlur}
+            className={
+              errors.oldPrice && touched.oldPrice
+                ? `${styles.input} ${styles.bottom_margin} input-error`
+                : `${styles.input} ${styles.bottom_margin}`
+            }
+            placeholder="Old price number"
+          ></input>
+          {/* status */}
+          <div className={styles.label}>
+            <span>Active status</span>
+            <span className={styles.error}> *</span>
+            {errors.email && touched.email && (
+              <span className="error">{errors.email}</span>
+            )}
+          </div>
+          <Switch
+            checked={values.isActive}
+            onClick={(event) => {
+              console.log(event.target.checked);
+              setFieldValue("isActive", !values.isActive);
+            }}
+            id="isActive"
+            type="isActive"
+            // onBlur={handleBlur}
+            inputProps={{ "aria-label": "controlled" }}
+          />
+          {/* barcode */}
+          <div className={styles.label}>
+            <span>Barcode</span>
+            <span className={styles.error}> *</span>
+            {errors.barcode && touched.barcode && (
+              <span className="error">{errors.barcode}</span>
+            )}
+          </div>
+          <input
+            value={values.barcode}
+            onChange={handleChange}
+            id="barcode"
+            onBlur={handleBlur}
+            className={
+              errors.barcode && touched.barcode
+                ? `${styles.input} ${styles.bottom_margin} input-error`
+                : `${styles.input} ${styles.bottom_margin}`
+            }
+            placeholder="Barcode"
+          ></input>
+          {/* productReference */}
+          <div className={styles.label}>
+            <span>ProductReference</span>
+            <span className={styles.error}> *</span>
+            {errors.productReference && touched.productReference && (
+              <span className="error">{errors.productReference}</span>
+            )}
+          </div>
+          <input
+            value={values.productReference}
+            onChange={handleChange}
+            id="productReference"
+            onBlur={handleBlur}
+            className={
+              errors.productReference && touched.productReference
+                ? `${styles.input} ${styles.bottom_margin} input-error`
+                : `${styles.input} ${styles.bottom_margin}`
+            }
+            placeholder="Product Reference"
+          ></input>
+          <button className={styles.brown_button} type="submit">
             Create
           </button>
         </>
       )}
-      {type === "product_update" && (
+      {type === "product_variant_update" && (
         <>
           <div className={styles.title}>Create an Account</div>
 

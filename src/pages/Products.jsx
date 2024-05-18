@@ -130,12 +130,12 @@ export default function Products() {
                 <th style={{ maxWidth: "200px" }}>Description</th>
                 <th>Brand</th>
                 <th>Category</th>
-                <th>Sizes</th>
-                <th>Colors</th>
+                {/* <th>Sizes</th>
+                <th>Colors</th> */}
                 <th>Active Status</th>
-                <th>Stock</th>
+                {/* <th>Stock</th>
                 <th>Price</th>
-                <th>Old price</th>
+                <th>Old price</th> */}
                 <th>Is new</th>
                 <th>Is sold</th>
                 <th>In sale</th>
@@ -179,7 +179,7 @@ export default function Products() {
                     <td>{truncateText(item.description, 10)}</td>
                     <td>{item.brand.name}</td>
                     <td>{item.category.name}</td>
-                    <td>
+                    {/* <td>
                       <div
                         style={{
                           display: "flex",
@@ -211,7 +211,7 @@ export default function Products() {
                           ></div>
                         ))}
                       </div>
-                    </td>
+                    </td> */}
                     <td>
                       {true ? (
                         <div style={{ color: "green", fontWeight: "bold" }}>
@@ -223,9 +223,9 @@ export default function Products() {
                         </div>
                       )}
                     </td>
-                    <td>{item.stock}</td>
+                    {/* <td>{item.stock}</td>
                     <td>{item.price}</td>
-                    <td>{item.oldPrice}</td>
+                    <td>{item.oldPrice}</td> */}
                     <td>{`${
                       item.extraInfo?.new ? item.extraInfo?.new : false
                     }`}</td>

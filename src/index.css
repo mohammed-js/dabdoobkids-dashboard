@@ -202,3 +202,11 @@ select.input-error,
 button:disabled {
   opacity: 0.35;
 }
+[contentEditable] {
+  font-weight: bold;
+  color: blue;
+  padding: 10px;
+}
+[contentEditable]:focus {
+  color: red;
+}

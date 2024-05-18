@@ -78,7 +78,7 @@ export default function Products() {
           console.error("API Error:", error);
         });
     }
-  }, [data, forceUpdate]);
+  }, [forceUpdate]);
   return (
     <>
       <div className="body-sidebar">

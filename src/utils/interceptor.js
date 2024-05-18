@@ -1,7 +1,9 @@
 import axios from "axios";
 
 const instance = axios.create({
-  baseURL: "https://dabdoobkidz-api.onrender.com", // Set your API base URL
+  // baseURL: "https://dabdoobkidz-api.onrender.com",
+  // baseURL: "https://api.dabdoobkidz.com/",
+  baseURL: "https://api.dabdoobkidz.com/",
 });
 
 // Request interceptor
@@ -26,8 +28,6 @@ instance.interceptors.request.use(
 // Response interceptor
 instance.interceptors.response.use(
   (response) => {
-    // Do something with the response data
-    console.log("Response Interceptor:", response.data);
     return response;
   },
   (error) => {
