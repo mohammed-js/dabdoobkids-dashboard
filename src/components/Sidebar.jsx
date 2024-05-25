@@ -107,9 +107,7 @@ const Sidebar = () => {
           onClick={() => {
             localStorage.removeItem("access_token");
             localStorage.removeItem("refresh_token");
-            window.location.replace(
-              "https://dabdoobkids-dashboard.vercel.app/login"
-            );
+            window.location.replace("/login");
             // http://localhost:3005
           }}
         >

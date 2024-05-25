@@ -68,6 +68,7 @@ export default function Products() {
           params: {
             items: 5,
             page: page,
+            all: true,
           },
         })
         .then((response) => {

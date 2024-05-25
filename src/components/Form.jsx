@@ -3897,6 +3897,7 @@ export default function Form({
             sx={{ borderRadius: "8px" }}
           >
             <MenuItem value="Monthly">Monthly</MenuItem>
+            <MenuItem value="Annually">Annually</MenuItem>
             <MenuItem value="AllTime">AllTime</MenuItem>
           </Select>
           {/* </FormControl> */}
