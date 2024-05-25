@@ -5,6 +5,7 @@ import {
   BrowserRouter,
   useNavigate,
   useLocation,
+  Navigate,
 } from "react-router-dom";
 import Products from "./pages/Products.jsx";
 import ProductsVariants from "./pages/ProductsVariants.jsx";
@@ -24,7 +25,6 @@ import { useTranslation } from "react-i18next";
 import Navbar from "./components/Navbar";
 function App() {
   const mode = useSelector((state) => state.mode);
-
   //* localization
   const { t } = useTranslation();
   let locale = i18n.language === "en" ? "en" : "ar";
@@ -34,6 +34,19 @@ function App() {
       mode == "light" ? "#F2F1EB" : "rgb(37, 52, 107)";
     // #eefff5
   }, [mode]);
+  const noAccessTokenPresent = !localStorage.getItem("access_token");
+  const notInLoginPage = window.location.pathname !== "/login";
+  const needToLogin = noAccessTokenPresent && notInLoginPage;
+  useLayoutEffect(() => {
+    if (needToLogin) {
+      window.location.pathname = "/login";
+      localStorage.removeItem("access_token");
+      localStorage.removeItem("refresh_token");
+    }
+  }, []);
+  if (needToLogin) {
+    return null; // Return null to prevent rendering
+  }
   return (
     <BrowserRouter>
       <div className="container">
@@ -51,6 +64,7 @@ function App() {
               <Route path="/orders" element={<Orders />} />
               <Route path="/plans" element={<Plans />} />
               <Route path="/collections" element={<Collections />} />
+              <Route path="*" element={<Navigate to="/products" replace />} />
             </Routes>
           </div>
         </div>
