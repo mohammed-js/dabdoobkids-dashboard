@@ -1,4 +1,6 @@
 import { useState, useEffect, useLayoutEffect } from "react";
+import { ToastContainer, toast } from "react-toastify";
+
 import {
   Route,
   Routes,
@@ -69,6 +71,7 @@ function App() {
           </div>
         </div>
       </div>
+      <ToastContainer />
     </BrowserRouter>
   );
 }

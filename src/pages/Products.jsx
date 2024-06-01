@@ -18,10 +18,17 @@ import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import { truncateText } from "../utils/general.js";
 import Sidebar from "../components/Sidebar.jsx";
+import Switch from "@mui/material/Switch";
 
 import DialogTitle from "@mui/material/DialogTitle";
 import Slide from "@mui/material/Slide";
 import instance from "../utils/interceptor.js";
+import {
+  notifySuccess,
+  notifyError,
+  logout,
+  refire,
+} from "../utils/general.js";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -68,6 +75,7 @@ export default function Products() {
           params: {
             items: 5,
             page: page,
+            all: true,
           },
         })
         .then((response) => {
@@ -145,7 +153,7 @@ export default function Products() {
             <tbody>
               {!isLoading &&
                 data?.map((item) => (
-                  <tr>
+                  <tr key={item.id}>
                     <td>
                       <div
                         style={{
@@ -175,10 +183,10 @@ export default function Products() {
                         />
                       </div>
                     </td>
-                    <td>{item.name}</td>
-                    <td>{truncateText(item.description, 10)}</td>
-                    <td>{item.brand.name}</td>
-                    <td>{item.category.name}</td>
+                    <td>{item.name.en}</td>
+                    <td>{truncateText(item.description.en, 10)}</td>
+                    <td>{item.brand.name.en}</td>
+                    <td>{item.category.name.en}</td>
                     {/* <td>
                       <div
                         style={{
@@ -212,7 +220,7 @@ export default function Products() {
                         ))}
                       </div>
                     </td> */}
-                    <td>
+                    {/* <td>
                       {true ? (
                         <div style={{ color: "green", fontWeight: "bold" }}>
                           active
@@ -222,7 +230,26 @@ export default function Products() {
                           inactive
                         </div>
                       )}
-                    </td>
+                    </td> */}
+                    <Switch
+                      defaultChecked={item.isActive ? true : false}
+                      onClick={(e) => {
+                        console.log(e);
+                        instance
+                          .put(`products/${item.id}`, {
+                            isActive: !item.isActive,
+                          })
+                          .then((response) => {
+                            console.log(response);
+                            // setForceUpdate((prev) => !prev);
+                            notifySuccess("Successfully updated!");
+                          })
+                          .catch((error) => {
+                            notifyError("Error encountered!");
+                          });
+                      }}
+                    />
+
                     {/* <td>{item.stock}</td>
                     <td>{item.price}</td>
                     <td>{item.oldPrice}</td> */}
