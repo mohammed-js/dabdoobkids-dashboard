@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import logo from "../assets/logo.png";
 import MySwitch from "../components/MySwitch.jsx";
+import Switch from "@mui/material/Switch";
+import { notifySuccess, notifyError } from "../utils/general.js";
+
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
@@ -68,6 +71,7 @@ export default function Products() {
           params: {
             items: 5,
             page: page,
+            all: true,
           },
         })
         .then((response) => {
@@ -165,8 +169,25 @@ export default function Products() {
                         />
                       </div>
                     </td>
-                    <td>{item.name}</td>
-                    <td>{item.isActive}</td>
+                    <td>{item.name.en}</td>
+                    <Switch
+                      defaultChecked={item.isActive ? true : false}
+                      onClick={(e) => {
+                        console.log(e);
+                        instance
+                          .put(`categories/${item.id}`, {
+                            isActive: !item.isActive,
+                          })
+                          .then((response) => {
+                            console.log(response);
+                            // setForceUpdate((prev) => !prev);
+                            notifySuccess("Successfully updated!");
+                          })
+                          .catch((error) => {
+                            notifyError("Error encountered!");
+                          });
+                      }}
+                    />
                     <td>
                       <div
                         style={{

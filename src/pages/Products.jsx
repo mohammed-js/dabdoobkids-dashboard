@@ -23,12 +23,7 @@ import Switch from "@mui/material/Switch";
 import DialogTitle from "@mui/material/DialogTitle";
 import Slide from "@mui/material/Slide";
 import instance from "../utils/interceptor.js";
-import {
-  notifySuccess,
-  notifyError,
-  logout,
-  refire,
-} from "../utils/general.js";
+import { notifySuccess, notifyError } from "../utils/general.js";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -187,50 +182,6 @@ export default function Products() {
                     <td>{truncateText(item.description.en, 10)}</td>
                     <td>{item.brand.name.en}</td>
                     <td>{item.category.name.en}</td>
-                    {/* <td>
-                      <div
-                        style={{
-                          display: "flex",
-                          flexWrap: "wrap",
-                          gap: "5px",
-                        }}
-                      >
-                        {item.sizes.map((size) => (
-                          <div>{size}</div>
-                        ))}
-                      </div>
-                    </td>
-                    <td>
-                      <div
-                        style={{
-                          display: "flex",
-                          flexWrap: "wrap",
-                          gap: "5px",
-                        }}
-                      >
-                        {item.colors.map((color) => (
-                          <div
-                            style={{
-                              backgroundColor: color,
-                              width: "15px",
-                              height: "15px",
-                              borderRadius: "50%",
-                            }}
-                          ></div>
-                        ))}
-                      </div>
-                    </td> */}
-                    {/* <td>
-                      {true ? (
-                        <div style={{ color: "green", fontWeight: "bold" }}>
-                          active
-                        </div>
-                      ) : (
-                        <div style={{ color: "red", fontWeight: "bold" }}>
-                          inactive
-                        </div>
-                      )}
-                    </td> */}
                     <Switch
                       defaultChecked={item.isActive ? true : false}
                       onClick={(e) => {
@@ -249,10 +200,6 @@ export default function Products() {
                           });
                       }}
                     />
-
-                    {/* <td>{item.stock}</td>
-                    <td>{item.price}</td>
-                    <td>{item.oldPrice}</td> */}
                     <td>{`${
                       item.extraInfo?.new ? item.extraInfo?.new : false
                     }`}</td>
