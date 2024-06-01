@@ -139,7 +139,7 @@ export default function Products() {
             <tbody>
               {!isLoading &&
                 data?.map((item) => (
-                  <tr>
+                  <tr key={item.id}>
                     <td>
                       <div
                         style={{

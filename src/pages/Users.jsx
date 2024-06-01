@@ -22,6 +22,8 @@ import Sidebar from "../components/Sidebar.jsx";
 import DialogTitle from "@mui/material/DialogTitle";
 import Slide from "@mui/material/Slide";
 import instance from "../utils/interceptor.js";
+import Switch from "@mui/material/Switch";
+import { notifySuccess, notifyError } from "../utils/general.js";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -131,6 +133,7 @@ export default function Products() {
                 <th>Email</th>
                 <th>Verified</th>
                 <th>Avatar</th>
+                <th>Active Status</th>
               </tr>
             </thead>
             <tbody>
@@ -170,6 +173,24 @@ export default function Products() {
                     <td>{item.email}</td>
                     <td>{item.isVerified ? "true" : "false"}</td>
                     <td>{item.avatar}</td>
+                    <Switch
+                      defaultChecked={item.isActive ? true : false}
+                      onClick={(e) => {
+                        console.log(e);
+                        instance
+                          .put(`users/${item.id}`, {
+                            isActive: !item.isActive,
+                          })
+                          .then((response) => {
+                            console.log(response);
+                            // setForceUpdate((prev) => !prev);
+                            notifySuccess("Successfully updated!");
+                          })
+                          .catch((error) => {
+                            notifyError("Error encountered!");
+                          });
+                      }}
+                    />
                   </tr>
                 ))}
               {isLoading && (

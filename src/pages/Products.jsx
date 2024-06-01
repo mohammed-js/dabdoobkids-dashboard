@@ -18,11 +18,11 @@ import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import { truncateText } from "../utils/general.js";
 import Sidebar from "../components/Sidebar.jsx";
-import Switch from "@mui/material/Switch";
 
 import DialogTitle from "@mui/material/DialogTitle";
 import Slide from "@mui/material/Slide";
 import instance from "../utils/interceptor.js";
+import Switch from "@mui/material/Switch";
 import { notifySuccess, notifyError } from "../utils/general.js";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
