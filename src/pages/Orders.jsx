@@ -23,6 +23,11 @@ import { format } from "date-fns";
 import DialogTitle from "@mui/material/DialogTitle";
 import Slide from "@mui/material/Slide";
 import instance from "../utils/interceptor.js";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
+import { notifySuccess, notifyError } from "../utils/general.js";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -202,8 +207,78 @@ export default function Orders() {
                     <td>{item.itemsCount}</td>
                     <td>{item.totalPrice}</td>
                     <td>{item.discount}</td>
-                    <td>{item.orderStatus}</td>
-                    <td>{item.delivertStatus}</td>
+                    <td>
+                      <FormControl fullWidth>
+                        <InputLabel id="demo-simple-select-label">
+                          Order Status
+                        </InputLabel>
+                        <Select
+                          size="small"
+                          labelId="demo-simple-select-label"
+                          id="demo-simple-select"
+                          defaultValue={item.orderStatus}
+                          label="Order Status"
+                          onChange={(e) => {
+                            instance
+                              .put(`orders/${item.id}`, {
+                                status: e.target.value,
+                              })
+                              .then((response) => {
+                                console.log(response);
+                                // setForceUpdate((prev) => !prev);
+                                notifySuccess("Successfully updated!");
+                              })
+                              .catch((error) => {
+                                notifyError("Error encountered!");
+                              });
+                          }}
+                        >
+                          <MenuItem value="Initiated">Initiated</MenuItem>
+                          <MenuItem value="Pending">Pending</MenuItem>
+                          <MenuItem value="Paid">Paid</MenuItem>
+                          <MenuItem value="Failed">Failed</MenuItem>
+                          <MenuItem value="Refunded">Refunded</MenuItem>
+                          <MenuItem value="Partial Refunded">
+                            Partial Refunded
+                          </MenuItem>
+                          <MenuItem value="Returned">Returned</MenuItem>
+                        </Select>
+                      </FormControl>
+                    </td>
+                    <td>
+                      <FormControl fullWidth>
+                        <InputLabel id="demo-simple-select-label">
+                          Delivery Status
+                        </InputLabel>
+                        <Select
+                          size="small"
+                          labelId="demo-simple-select-label"
+                          id="demo-simple-select"
+                          defaultValue={item.delivertStatus}
+                          label="Delivery Status"
+                          onChange={(e) => {
+                            instance
+                              .put(`orders/${item.id}`, {
+                                deliveryStatus: e.target.value,
+                              })
+                              .then((response) => {
+                                console.log(response);
+                                // setForceUpdate((prev) => !prev);
+                                notifySuccess("Successfully updated!");
+                              })
+                              .catch((error) => {
+                                notifyError("Error encountered!");
+                              });
+                          }}
+                        >
+                          <MenuItem value="Pending">Pending</MenuItem>
+                          <MenuItem value="Shipped">Shipped</MenuItem>
+                          <MenuItem value="Delivered">Delivered</MenuItem>
+                          <MenuItem value="Cancelled">Cancelled</MenuItem>
+                          <MenuItem value="Returned">Returned</MenuItem>
+                        </Select>
+                      </FormControl>
+                    </td>
                     <td>{item.paymentMethod}</td>
                     <td>{item.promocode ? item.promocode : "-"}</td>
                   </tr>

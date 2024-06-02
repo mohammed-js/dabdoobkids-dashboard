@@ -32,7 +32,6 @@ instance.interceptors.response.use(
   },
   (error) => {
     // Do something with response error
-    alert(error.message);
     console.error("Response Error Interceptor:", error);
     return Promise.reject(error);
   }

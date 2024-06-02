@@ -172,7 +172,15 @@ export default function Products() {
                     <td>{`${item.firstName} ${item.lastName}`}</td>
                     <td>{item.email}</td>
                     <td>{item.isVerified ? "true" : "false"}</td>
-                    <td>{item.avatar}</td>
+                    <td>
+                      {item.avatar ? (
+                        <a href={item.avatar} target="_blank">
+                          image
+                        </a>
+                      ) : (
+                        "-"
+                      )}
+                    </td>
                     <Switch
                       defaultChecked={item.isActive ? true : false}
                       onClick={(e) => {
