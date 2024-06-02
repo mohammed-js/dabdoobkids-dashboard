@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from "react";
 import styles from "./Form.module.css";
 import { TwitterPicker } from "react-color";
+import dayjs from "dayjs";
+import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import Switch from "@mui/material/Switch";
 import {
   loginSchema,
@@ -78,6 +83,7 @@ import {
   createPlan,
   createPlanInitialValues,
 } from "../utils/schemas/createPlan.js";
+import { shipping, shippingInitialValues } from "../utils/schemas/shipping.js";
 import { useFormik } from "formik";
 import Loader from "./Loader";
 import { toast } from "react-toastify";
@@ -112,6 +118,20 @@ export default function Form({
   const [categories, setCategories] = useState([]);
   const [subcategories, setSubcategories] = useState([]);
   const [brands, setBrands] = useState([]);
+  const [elements, setElements] = useState([
+    {
+      title: {
+        en: "",
+        ar: "",
+      },
+      description: {
+        en: "",
+        ar: "",
+      },
+      image: "",
+      order: 1,
+    },
+  ]);
 
   const sizes = ["sm", "m", "l", "xl", "xxl", "xxxl"];
   const ITEM_HEIGHT = 48;
@@ -126,7 +146,8 @@ export default function Form({
   };
   if (type == "product_update") {
   }
-  const handleFileChange = (e) => {
+  const handleFileChange = (e, i) => {
+    console.log("555555555", e, i);
     // **
     window.stop();
     setIsUploaded(false);
@@ -165,9 +186,13 @@ export default function Form({
         });
     });
     Promise.all(promises).then((res) => {
-      console.log(res);
-      setFieldValue("images", res);
-
+      if (i >= 0) {
+        let clonedElements = [...elements];
+        clonedElements[i].image = res[0];
+        setElements(clonedElements);
+      } else {
+        setFieldValue("images", res);
+      }
       setIsUploading(false);
       setIsUploaded(true);
     });
@@ -176,6 +201,7 @@ export default function Form({
   const navigate = useNavigate();
 
   const onSubmit = async (values, actions) => {
+    console.log(values);
     let endpoint;
     let body;
     let method;
@@ -333,34 +359,26 @@ export default function Form({
         method = "put";
         break;
       case "content_create":
-        endpoint = "/collections";
+        endpoint = "/contents";
         body = {
           name: {
             en: values.nameEn,
             ar: values.nameAr,
           },
-          description: {
-            en: values.descriptionEn,
-            ar: values.descriptionAr,
-          },
           isActive: values.isActive,
-          images: values.images,
+          elements: elements,
         };
         method = "post";
         break;
       case "content_update":
-        endpoint = `/collections/${currentId}`;
+        endpoint = `/contents/${currentId}`;
         body = {
           name: {
             en: values.nameEn,
             ar: values.nameAr,
           },
-          description: {
-            en: values.descriptionEn,
-            ar: values.descriptionAr,
-          },
           isActive: values.isActive,
-          images: values.images,
+          elements: elements,
         };
         method = "put";
         break;
@@ -502,6 +520,18 @@ export default function Form({
         };
         method = "put";
         break;
+      case "shipping":
+        endpoint = `/orders/${currentId}/ship`;
+        body = {
+          ...values,
+          weight: +values.weight,
+          packageSerial: +values.packageSerial,
+          buildingNo: +values.buildingNo,
+          floorNo: +values.floorNo,
+          apartmentNo: +values.apartmentNo,
+        };
+        method = "post";
+        break;
       default:
     }
 
@@ -527,7 +557,8 @@ export default function Form({
           type === "user_create" ||
           type === "user_update" ||
           type === "plan_create" ||
-          type === "plan_update"
+          type === "plan_update" ||
+          type === "shipping"
         ) {
           setData([]);
           setForceUpdate((prev) => !prev);
@@ -628,6 +659,10 @@ export default function Form({
     case "plan_update":
       initialValues = updatePlanInitialValues;
       schema = updatePlan;
+      break;
+    case "shipping":
+      initialValues = shippingInitialValues;
+      schema = shipping;
       break;
     default:
   }
@@ -2503,109 +2538,137 @@ export default function Form({
             }
             placeholder="Your last name"
           ></input>
-          {/* descriptionEn */}
-          <div className={styles.label}>
-            <span>English Description</span>
-            <span className={styles.error}> *</span>
-            {errors.descriptionEn && touched.descriptionEn && (
-              <span className="error">{errors.descriptionEn}</span>
-            )}
-          </div>
-          <input
-            value={values.descriptionEn}
-            onChange={handleChange}
-            id="descriptionEn"
-            type="descriptionEn"
-            onBlur={handleBlur}
-            className={
-              errors.descriptionEn && touched.descriptionEn
-                ? `${styles.input} ${styles.bottom_margin} input-error`
-                : `${styles.input} ${styles.bottom_margin}`
-            }
-            placeholder="Your last name"
-          ></input>
-          {/* descriptionAr */}
-          <div className={styles.label}>
-            <span>Arabic Description</span>
-            <span className={styles.error}> *</span>
-            {errors.descriptionAr && touched.descriptionAr && (
-              <span className="error">{errors.descriptionAr}</span>
-            )}
-          </div>
-          <input
-            value={values.descriptionAr}
-            onChange={handleChange}
-            id="descriptionAr"
-            type="descriptionAr"
-            onBlur={handleBlur}
-            className={
-              errors.descriptionAr && touched.descriptionAr
-                ? `${styles.input} ${styles.bottom_margin} input-error`
-                : `${styles.input} ${styles.bottom_margin}`
-            }
-            placeholder="Your last name"
-          ></input>
-          {/* status */}
-          <div className={styles.label}>
-            <span>Active status</span>
-            <span className={styles.error}> *</span>
-            {errors.email && touched.email && (
-              <span className="error">{errors.email}</span>
-            )}
-          </div>
-          <Switch
-            checked={values.isActive}
-            onClick={(event) => {
-              console.log(event.target.checked);
-              setFieldValue("isActive", !values.isActive);
-            }}
-            id="isActive"
-            type="isActive"
-            // onBlur={handleBlur}
-            inputProps={{ "aria-label": "controlled" }}
-          />
-          {/* upload image*/}
-          <div className={styles.label}>
-            <span>Upload file</span>
-            <span className={styles.error}> *</span>
-            {errors.images && touched.images && (
-              <span className="error">{errors.images}</span>
-            )}
-          </div>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "5px",
+          <Box
+            sx={{ cursor: "pointer" }}
+            onClick={() => {
+              setElements((prev) => [
+                ...prev,
+                {
+                  title: {
+                    en: "",
+                    ar: "",
+                  },
+                  description: {
+                    en: "",
+                    ar: "",
+                  },
+                  image: "",
+                  order: elements.length + 1,
+                },
+              ]);
             }}
           >
-            <label
-              style={{
-                opacity: isUploading ? ".3" : "initial",
-                pointerEvents: isUploading ? "none" : "initial",
-                cursor: isUploading ? "not-allowed" : "pointer",
-              }}
-            >
-              {/* <img src="/upload.png" width="30px" /> */}
-              <input
-                multiple
-                type="file"
-                name="file"
-                onChange={handleFileChange}
-                style={{ width: "180px" }}
-              />
-            </label>
+            Add +
+          </Box>
+          <Box
+            sx={{ cursor: "pointer" }}
+            onClick={() => {
+              let clonedElements = [...elements];
+              clonedElements.pop();
+              setElements(clonedElements);
+            }}
+          >
+            Remove -
+          </Box>
+          {elements.map((element, i) => (
             <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
+              sx={{ border: "1px dashed #000", borderRadius: "8px", p: "8px" }}
             >
-              {isUploading && <CircularProgress size="20px" />}
-              {isUploaded && <CloudDoneIcon sx={{ color: "green" }} />}
+              {/* titleEn */}
+              <div className={styles.label}>
+                <span>English Title</span>
+              </div>
+              <input
+                value={element.title.en}
+                onChange={(e) => {
+                  let clonedElements = [...elements];
+                  clonedElements[i].title.en = e.target.value;
+                  setElements(clonedElements);
+                }}
+              ></input>
+              {/* titleAr */}
+              <div className={styles.label}>
+                <span>Arabic Title</span>
+              </div>
+              <input
+                value={element.title.ar}
+                onChange={(e) => {
+                  let clonedElements = [...elements];
+                  clonedElements[i].title.ar = e.target.value;
+                  setElements(clonedElements);
+                }}
+              ></input>
+              {/* descriptionEn */}
+              <div className={styles.label}>
+                <span>English Description</span>
+                <span className={styles.error}> *</span>
+              </div>
+              <input
+                value={element.description.en}
+                onChange={(e) => {
+                  let clonedElements = [...elements];
+                  clonedElements[i].description.en = e.target.value;
+                  setElements(clonedElements);
+                }}
+              ></input>
+              {/* descriptionAr */}
+              <div className={styles.label}>
+                <span>Arabic Description</span>
+                <span className={styles.error}> *</span>
+              </div>
+              <input
+                value={element.description.ar}
+                onChange={(e) => {
+                  let clonedElements = [...elements];
+                  clonedElements[i].description.ar = e.target.value;
+                  setElements(clonedElements);
+                }}
+              ></input>
+              {/* upload image*/}
+              <div className={styles.label}>
+                <span>Upload file</span>
+                <span className={styles.error}> *</span>
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "5px",
+                }}
+              >
+                <label
+                  style={
+                    {
+                      // opacity: isUploading ? ".3" : "initial",
+                      // pointerEvents: isUploading ? "none" : "initial",
+                      // cursor: isUploading ? "not-allowed" : "pointer",
+                    }
+                  }
+                >
+                  <input
+                    multiple
+                    type="file"
+                    name="file"
+                    onChange={(e) => {
+                      handleFileChange(e, i);
+                    }}
+                    style={{ width: "180px" }}
+                  />
+                </label>
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  {elements[i].image && (
+                    <CloudDoneIcon sx={{ color: "green" }} />
+                  )}
+                </Box>
+              </div>
             </Box>
-          </div>
+          ))}
 
           <button className={styles.brown_button} type="submit">
             Create
@@ -2614,7 +2677,7 @@ export default function Form({
       )}
       {type === "content_update" && (
         <>
-          <div className={styles.title}>Update a collection</div>
+          <div className={styles.title}>Update a content</div>
 
           {/* nameEn */}
           <div className={styles.label}>
@@ -4041,6 +4104,377 @@ export default function Form({
           {/* </FormControl> */}
           <button className={styles.brown_button} type="submit">
             Create
+          </button>
+        </>
+      )}
+      {type === "shipping" && (
+        <>
+          <div className={styles.title}>Shipping Details</div>
+
+          {/* pickupDueDate */}
+          <div className={styles.label}>
+            <span>Due Date</span>
+            <span className={styles.error}> *</span>
+            {errors.pickupDueDate && touched.pickupDueDate && (
+              <span className="error">{errors.pickupDueDate}</span>
+            )}
+          </div>
+          <LocalizationProvider dateAdapter={AdapterDayjs} size="small">
+            <DatePicker
+              id="pickupDueDate"
+              type="pickupDueDate"
+              onBlur={handleBlur}
+              className={
+                errors.pickupDueDate && touched.pickupDueDate
+                  ? `${styles.input} ${styles.bottom_margin} input-error`
+                  : `${styles.input} ${styles.bottom_margin}`
+              }
+              placeholder="pick up due date"
+              value={values.pickupDueDate}
+              onChange={(newValue) => setFieldValue("pickupDueDate", newValue)}
+            />
+          </LocalizationProvider>
+
+          {/* warehouseName */}
+          <div className={styles.label}>
+            <span>WarehouseName</span>
+            <span className={styles.error}> *</span>
+            {errors.warehouseName && touched.warehouseName && (
+              <span className="error">{errors.warehouseName}</span>
+            )}
+          </div>
+          <input
+            value={values.warehouseName}
+            onChange={handleChange}
+            id="warehouseName"
+            type="warehouseName"
+            onBlur={handleBlur}
+            className={
+              errors.warehouseName && touched.warehouseName
+                ? `${styles.input} ${styles.bottom_margin} input-error`
+                : `${styles.input} ${styles.bottom_margin}`
+            }
+            placeholder="pick up due date"
+          ></input>
+          {/* description */}
+          <div className={styles.label}>
+            <span>Description</span>
+            <span className={styles.error}> *</span>
+            {errors.description && touched.description && (
+              <span className="error">{errors.description}</span>
+            )}
+          </div>
+          <input
+            value={values.description}
+            onChange={handleChange}
+            id="description"
+            type="description"
+            onBlur={handleBlur}
+            className={
+              errors.description && touched.description
+                ? `${styles.input} ${styles.bottom_margin} input-error`
+                : `${styles.input} ${styles.bottom_margin}`
+            }
+            placeholder="pick up due date"
+          ></input>
+          {/* weight */}
+          <div className={styles.label}>
+            <span>Weight</span>
+            <span className={styles.error}> *</span>
+            {errors.weight && touched.weight && (
+              <span className="error">{errors.weight}</span>
+            )}
+          </div>
+          <input
+            value={values.weight}
+            onChange={handleChange}
+            id="weight"
+            type="weight"
+            onBlur={handleBlur}
+            className={
+              errors.weight && touched.weight
+                ? `${styles.input} ${styles.bottom_margin} input-error`
+                : `${styles.input} ${styles.bottom_margin}`
+            }
+            placeholder="pick up due date"
+          ></input>
+          {/* customerName */}
+          <div className={styles.label}>
+            <span>Customer Name</span>
+            <span className={styles.error}> *</span>
+            {errors.customerName && touched.customerName && (
+              <span className="error">{errors.customerName}</span>
+            )}
+          </div>
+          <input
+            value={values.customerName}
+            onChange={handleChange}
+            id="customerName"
+            type="customerName"
+            onBlur={handleBlur}
+            className={
+              errors.customerName && touched.customerName
+                ? `${styles.input} ${styles.bottom_margin} input-error`
+                : `${styles.input} ${styles.bottom_margin}`
+            }
+            placeholder="pick up due date"
+          ></input>
+          {/* packageSerial */}
+          <div className={styles.label}>
+            <span>Page Serial</span>
+            <span className={styles.error}> *</span>
+            {errors.packageSerial && touched.packageSerial && (
+              <span className="error">{errors.packageSerial}</span>
+            )}
+          </div>
+          <input
+            value={values.packageSerial}
+            onChange={handleChange}
+            id="packageSerial"
+            type="packageSerial"
+            onBlur={handleBlur}
+            className={
+              errors.packageSerial && touched.packageSerial
+                ? `${styles.input} ${styles.bottom_margin} input-error`
+                : `${styles.input} ${styles.bottom_margin}`
+            }
+            placeholder="pick up due date"
+          ></input>
+          {/* customerPhone */}
+          <div className={styles.label}>
+            <span>Customer Phone</span>
+            <span className={styles.error}> *</span>
+            {errors.customerPhone && touched.customerPhone && (
+              <span className="error">{errors.customerPhone}</span>
+            )}
+          </div>
+          <input
+            value={values.customerPhone}
+            onChange={handleChange}
+            id="customerPhone"
+            type="customerPhone"
+            onBlur={handleBlur}
+            className={
+              errors.customerPhone && touched.customerPhone
+                ? `${styles.input} ${styles.bottom_margin} input-error`
+                : `${styles.input} ${styles.bottom_margin}`
+            }
+            placeholder="pick up due date"
+          ></input>
+          {/* buildingNo */}
+          <div className={styles.label}>
+            <span>Building No</span>
+            <span className={styles.error}> *</span>
+            {errors.buildingNo && touched.buildingNo && (
+              <span className="error">{errors.buildingNo}</span>
+            )}
+          </div>
+          <input
+            value={values.buildingNo}
+            onChange={handleChange}
+            id="buildingNo"
+            type="buildingNo"
+            onBlur={handleBlur}
+            className={
+              errors.buildingNo && touched.buildingNo
+                ? `${styles.input} ${styles.bottom_margin} input-error`
+                : `${styles.input} ${styles.bottom_margin}`
+            }
+            placeholder="pick up due date"
+          ></input>
+          {/* street */}
+          <div className={styles.label}>
+            <span>Street</span>
+            <span className={styles.error}> *</span>
+            {errors.street && touched.street && (
+              <span className="error">{errors.street}</span>
+            )}
+          </div>
+          <input
+            value={values.street}
+            onChange={handleChange}
+            id="street"
+            type="street"
+            onBlur={handleBlur}
+            className={
+              errors.street && touched.street
+                ? `${styles.input} ${styles.bottom_margin} input-error`
+                : `${styles.input} ${styles.bottom_margin}`
+            }
+            placeholder="pick up due date"
+          ></input>
+          {/* floorNo */}
+          <div className={styles.label}>
+            <span>Floor No</span>
+            <span className={styles.error}> *</span>
+            {errors.floorNo && touched.floorNo && (
+              <span className="error">{errors.floorNo}</span>
+            )}
+          </div>
+          <input
+            value={values.floorNo}
+            onChange={handleChange}
+            id="floorNo"
+            type="floorNo"
+            onBlur={handleBlur}
+            className={
+              errors.floorNo && touched.floorNo
+                ? `${styles.input} ${styles.bottom_margin} input-error`
+                : `${styles.input} ${styles.bottom_margin}`
+            }
+            placeholder="pick up due date"
+          ></input>
+          {/* apartmentNo */}
+          <div className={styles.label}>
+            <span>Apartment No</span>
+            <span className={styles.error}> *</span>
+            {errors.apartmentNo && touched.apartmentNo && (
+              <span className="error">{errors.apartmentNo}</span>
+            )}
+          </div>
+          <input
+            value={values.apartmentNo}
+            onChange={handleChange}
+            id="apartmentNo"
+            type="apartmentNo"
+            onBlur={handleBlur}
+            className={
+              errors.apartmentNo && touched.apartmentNo
+                ? `${styles.input} ${styles.bottom_margin} input-error`
+                : `${styles.input} ${styles.bottom_margin}`
+            }
+            placeholder="pick up due date"
+          ></input>
+          {/* governorateCode */}
+          <div className={styles.label}>
+            <span>Governorate Code</span>
+            <span className={styles.error}> *</span>
+            {errors.governorateCode && touched.governorateCode && (
+              <span className="error">{errors.governorateCode}</span>
+            )}
+          </div>
+          <input
+            value={values.governorateCode}
+            onChange={handleChange}
+            id="governorateCode"
+            type="governorateCode"
+            onBlur={handleBlur}
+            className={
+              errors.governorateCode && touched.governorateCode
+                ? `${styles.input} ${styles.bottom_margin} input-error`
+                : `${styles.input} ${styles.bottom_margin}`
+            }
+            placeholder="pick up due date"
+          ></input>
+          {/* cityCode */}
+          <div className={styles.label}>
+            <span>City Code</span>
+            <span className={styles.error}> *</span>
+            {errors.cityCode && touched.cityCode && (
+              <span className="error">{errors.cityCode}</span>
+            )}
+          </div>
+          <input
+            value={values.cityCode}
+            onChange={handleChange}
+            id="cityCode"
+            type="cityCode"
+            onBlur={handleBlur}
+            className={
+              errors.cityCode && touched.cityCode
+                ? `${styles.input} ${styles.bottom_margin} input-error`
+                : `${styles.input} ${styles.bottom_margin}`
+            }
+            placeholder="pick up due date"
+          ></input>
+          {/* district */}
+          <div className={styles.label}>
+            <span>District</span>
+            <span className={styles.error}> *</span>
+            {errors.district && touched.district && (
+              <span className="error">{errors.district}</span>
+            )}
+          </div>
+          <input
+            value={values.district}
+            onChange={handleChange}
+            id="district"
+            type="district"
+            onBlur={handleBlur}
+            className={
+              errors.district && touched.district
+                ? `${styles.input} ${styles.bottom_margin} input-error`
+                : `${styles.input} ${styles.bottom_margin}`
+            }
+            placeholder="pick up due date"
+          ></input>
+          {/* allowToOpenPackage */}
+          <div className={styles.label}>
+            <span>Allow To Open Package</span>
+            <span className={styles.error}> *</span>
+            {errors.allowToOpenPackage && touched.allowToOpenPackage && (
+              <span className="error">{errors.allowToOpenPackage}</span>
+            )}
+          </div>
+          <Switch
+            checked={values.allowToOpenPackage}
+            onClick={(event) => {
+              console.log(event.target.checked);
+              setFieldValue("allowToOpenPackage", !values.allowToOpenPackage);
+            }}
+            id="allowToOpenPackage"
+            type="allowToOpenPackage"
+            // onBlur={handleBlur}
+            inputProps={{ "aria-label": "controlled" }}
+          />
+          {/* serviceDate */}
+          <div className={styles.label}>
+            <span>Service Date</span>
+            <span className={styles.error}> *</span>
+            {errors.serviceDate && touched.serviceDate && (
+              <span className="error">{errors.serviceDate}</span>
+            )}
+          </div>
+          <LocalizationProvider dateAdapter={AdapterDayjs} size="small">
+            <DatePicker
+              id="serviceDate"
+              type="serviceDate"
+              onBlur={handleBlur}
+              className={
+                errors.serviceDate && touched.serviceDate
+                  ? `${styles.input} ${styles.bottom_margin} input-error`
+                  : `${styles.input} ${styles.bottom_margin}`
+              }
+              placeholder="pick up due date"
+              value={values.serviceDate}
+              onChange={(newValue) => setFieldValue("serviceDate", newValue)}
+            />
+          </LocalizationProvider>
+
+          {/* notes */}
+          <div className={styles.label}>
+            <span>Notes</span>
+            <span className={styles.error}> *</span>
+            {errors.notes && touched.notes && (
+              <span className="error">{errors.notes}</span>
+            )}
+          </div>
+          <input
+            value={values.notes}
+            onChange={handleChange}
+            id="notes"
+            type="notes"
+            onBlur={handleBlur}
+            className={
+              errors.notes && touched.notes
+                ? `${styles.input} ${styles.bottom_margin} input-error`
+                : `${styles.input} ${styles.bottom_margin}`
+            }
+            placeholder="pick up due date"
+          ></input>
+
+          <button className={styles.brown_button} type="submit">
+            Ship
           </button>
         </>
       )}

@@ -74,8 +74,8 @@ export default function Contents() {
           },
         })
         .then((response) => {
-          console.log(response.data.data.categories);
-          setData(response.data.data.categories);
+          console.log(response.data.data.contents);
+          setData(response.data.data.contents);
           setTotalPages(response.data.data.metadata.totalPages);
           setIsLoading(false);
         })
@@ -125,15 +125,14 @@ export default function Contents() {
                   <AddCircleIcon
                     sx={{ color: "#b5e550", cursor: "pointer", fontSize: 30 }}
                     onClick={() => {
-                      setPopupType("collection_create");
+                      setPopupType("content_create");
                       setOpen(true);
                     }}
                   />
                 </th>
                 <th>Name</th>
-                <th>Description</th>
                 <th>Active Status</th>
-                <th>Images</th>
+                <th>Items</th>
               </tr>
             </thead>
             <tbody>
@@ -170,13 +169,12 @@ export default function Contents() {
                       </div>
                     </td>
                     <td>{item.name.en}</td>
-                    <td>{item.description.en}</td>
                     <Switch
                       defaultChecked={item.isActive ? true : false}
                       onClick={(e) => {
                         console.log(e);
                         instance
-                          .put(`collections/${item.id}`, {
+                          .put(`contents/${item.id}`, {
                             isActive: e.target.checked,
                           })
                           .then((response) => {
@@ -192,19 +190,23 @@ export default function Contents() {
                     <td>
                       <div
                         style={{
-                          display: "flex",
-                          flexWrap: "wrap",
+                          // display: "flex",
+                          // flexWrap: "wrap",
                           gap: "5px",
                         }}
                       >
-                        {item.images.map((item, index) => (
-                          <a
-                            href={item}
-                            target="_blank"
-                            style={{ textDecoration: "none" }}
-                          >
-                            image {index + 1}
-                          </a>
+                        {item.elements.map((item, index) => (
+                          <div>
+                            <span>{item.title.en}</span>
+                            <span> | </span>
+                            <a
+                              href={item.image}
+                              target="_blank"
+                              style={{ textDecoration: "none" }}
+                            >
+                              image {index + 1}
+                            </a>
+                          </div>
                         ))}
                       </div>
                     </td>

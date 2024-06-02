@@ -195,6 +195,16 @@ export default function Popup({
             currentId={currentId}
           />
         )}
+        {type === "shipping" && (
+          <Form
+            type="shipping"
+            setOpen={setOpen}
+            setForceUpdate={setForceUpdate}
+            setData={setData}
+            setIsLoading={setIsLoading}
+            currentId={currentId}
+          />
+        )}
       </>
     </Modal>
   );

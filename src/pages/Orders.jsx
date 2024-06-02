@@ -33,7 +33,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 export default function Orders() {
-  const [categories, setCategories] = useState("");
+  const [lookups, setLookups] = useState(null);
   const [totalPages, setTotalPages] = useState(1);
   const [page, setPage] = useState(1);
   const [currentId, setCurrentId] = useState(null);
@@ -89,6 +89,20 @@ export default function Orders() {
         });
     }
   }, [forceUpdate]);
+  useEffect(() => {
+    instance
+      .get("orders/shipping/lookups", {
+        params: {
+          lookup: "All",
+        },
+      })
+      .then((response) => {
+        setLookups(response.data.data.data);
+      })
+      .catch((error) => {
+        console.error("API Error:", error);
+      });
+  }, []);
 
   return (
     <>
@@ -133,6 +147,7 @@ export default function Orders() {
                 <th>Discount</th>
                 <th>Order Status</th>
                 <th>Deliver Status</th>
+                <th>Launch shipping</th>
                 <th>Payment Method</th>
                 <th>Promo Code</th>
               </tr>
@@ -171,6 +186,11 @@ export default function Orders() {
                           Order Status
                         </InputLabel>
                         <Select
+                          disabled={
+                            item.paymentMethod === "Cash on Delivery"
+                              ? false
+                              : true
+                          }
                           size="small"
                           labelId="demo-simple-select-label"
                           id="demo-simple-select"
@@ -195,21 +215,17 @@ export default function Orders() {
                             Pending
                           </MenuItem>
                           <MenuItem value="Paid">Paid</MenuItem>
-                          <MenuItem value="Failed">Failed</MenuItem>
-                          <MenuItem value="Refunded">Refunded</MenuItem>
-                          <MenuItem value="Partial Refunded">
-                            Partial Refunded
-                          </MenuItem>
-                          <MenuItem value="Returned">Returned</MenuItem>
                         </Select>
                       </FormControl>
                     </td>
                     <td>
-                      <FormControl fullWidth>
+                      {item.delivertStatus}
+                      {/* <FormControl fullWidth>
                         <InputLabel id="demo-simple-select-label">
                           Delivery Status
                         </InputLabel>
                         <Select
+                          disabled
                           size="small"
                           labelId="demo-simple-select-label"
                           id="demo-simple-select"
@@ -230,15 +246,26 @@ export default function Orders() {
                               });
                           }}
                         >
-                          <MenuItem value="Pending" disabled>
-                            Pending
-                          </MenuItem>
+                          <MenuItem value="Pending">Pending</MenuItem>
                           <MenuItem value="Shipped">Shipped</MenuItem>
                           <MenuItem value="Delivered">Delivered</MenuItem>
                           <MenuItem value="Cancelled">Cancelled</MenuItem>
                           <MenuItem value="Returned">Returned</MenuItem>
                         </Select>
-                      </FormControl>
+                      </FormControl> */}
+                    </td>
+                    <td>
+                      <AddCircleIcon
+                        sx={{
+                          color: "#b5e550",
+                          cursor: "pointer",
+                          fontSize: 30,
+                        }}
+                        onClick={() => {
+                          setPopupType("shipping");
+                          setOpen(true);
+                        }}
+                      />
                     </td>
                     <td>{item.paymentMethod}</td>
                     <td>{item.promocode ? item.promocode : "-"}</td>
