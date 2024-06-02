@@ -140,7 +140,7 @@ export default function Orders() {
             <tbody>
               {!isLoading &&
                 data?.map((item) => (
-                  <tr>
+                  <tr key={item.id}>
                     <td>{item.id}</td>
                     <td>{item.orderReference}</td>
                     <td>{item.user}</td>
@@ -230,7 +230,9 @@ export default function Orders() {
                               });
                           }}
                         >
-                          <MenuItem value="Pending">Pending</MenuItem>
+                          <MenuItem value="Pending" disabled>
+                            Pending
+                          </MenuItem>
                           <MenuItem value="Shipped">Shipped</MenuItem>
                           <MenuItem value="Delivered">Delivered</MenuItem>
                           <MenuItem value="Cancelled">Cancelled</MenuItem>

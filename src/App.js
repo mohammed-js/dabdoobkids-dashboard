@@ -18,6 +18,7 @@ import Users from "./pages/Users.jsx";
 import Orders from "./pages/Orders.jsx";
 import Plans from "./pages/Plans.jsx";
 import Collections from "./pages/Collections.jsx";
+import Contents from "./pages/Contents.jsx";
 import { useSelector, useDispatch } from "react-redux";
 
 import Login from "./pages/Login.jsx";
@@ -66,6 +67,7 @@ function App() {
               <Route path="/orders" element={<Orders />} />
               <Route path="/plans" element={<Plans />} />
               <Route path="/collections" element={<Collections />} />
+              <Route path="/contents" element={<Contents />} />
               <Route path="*" element={<Navigate to="/products" replace />} />
             </Routes>
           </div>

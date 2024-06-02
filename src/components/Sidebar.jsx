@@ -71,6 +71,11 @@ const Sidebar = () => {
       text: { en: "Collections", ar: "الخطط" },
       path: "/collections",
     },
+    {
+      icon: faHouse,
+      text: { en: "Contents", ar: "المحتوى" },
+      path: "/contents",
+    },
   ];
   const active = locale === "en" ? "active-en" : "active-ar";
   return (

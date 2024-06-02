@@ -141,7 +141,7 @@ export default function Orders() {
             <tbody>
               {!isLoading &&
                 data?.map((item) => (
-                  <tr>
+                  <tr key={item.id}>
                     <td>
                       <div
                         style={{
@@ -183,7 +183,7 @@ export default function Orders() {
                         console.log(e);
                         instance
                           .put(`plans/${item.id}`, {
-                            isActive: !item.isActive,
+                            isActive: e.target.checked,
                           })
                           .then((response) => {
                             console.log(response);

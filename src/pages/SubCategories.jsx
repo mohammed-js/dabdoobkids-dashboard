@@ -168,14 +168,14 @@ export default function SubCategories() {
                       </div>
                     </td>
                     <td>{item.name.en}</td>
-                    <td>{item.category}</td>
+                    <td>{item.category.name.en}</td>
                     <Switch
                       defaultChecked={item.isActive ? true : false}
                       onClick={(e) => {
                         console.log(e);
                         instance
                           .put(`subcategories/${item.id}`, {
-                            isActive: !item.isActive,
+                            isActive: e.target.checked,
                           })
                           .then((response) => {
                             console.log(response);

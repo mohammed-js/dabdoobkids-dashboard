@@ -62,25 +62,6 @@ export default function Popup({
             currentId={currentId}
           />
         )}
-        {type === "collection_create" && (
-          <Form
-            type="collection_create"
-            setOpen={setOpen}
-            setForceUpdate={setForceUpdate}
-            setData={setData}
-            setIsLoading={setIsLoading}
-          />
-        )}
-        {type === "collection_update" && (
-          <Form
-            type="collection_update"
-            setOpen={setOpen}
-            setForceUpdate={setForceUpdate}
-            setData={setData}
-            setIsLoading={setIsLoading}
-            currentId={currentId}
-          />
-        )}
         {type === "category_create" && (
           <Form
             type="category_create"
@@ -169,6 +150,44 @@ export default function Popup({
         {type === "plan_update" && (
           <Form
             type="plan_update"
+            setOpen={setOpen}
+            setForceUpdate={setForceUpdate}
+            setData={setData}
+            setIsLoading={setIsLoading}
+            currentId={currentId}
+          />
+        )}
+        {type === "collection_create" && (
+          <Form
+            type="collection_create"
+            setOpen={setOpen}
+            setForceUpdate={setForceUpdate}
+            setData={setData}
+            setIsLoading={setIsLoading}
+          />
+        )}
+        {type === "collection_update" && (
+          <Form
+            type="collection_update"
+            setOpen={setOpen}
+            setForceUpdate={setForceUpdate}
+            setData={setData}
+            setIsLoading={setIsLoading}
+            currentId={currentId}
+          />
+        )}
+        {type === "content_create" && (
+          <Form
+            type="content_create"
+            setOpen={setOpen}
+            setForceUpdate={setForceUpdate}
+            setData={setData}
+            setIsLoading={setIsLoading}
+          />
+        )}
+        {type === "content_update" && (
+          <Form
+            type="content_update"
             setOpen={setOpen}
             setForceUpdate={setForceUpdate}
             setData={setData}

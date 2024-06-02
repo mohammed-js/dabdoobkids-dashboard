@@ -120,7 +120,6 @@ export default function Products() {
                   style={{ display: "flex", alignItems: "center", gap: "10px" }}
                 >
                   <span>Control</span>
-
                   <AddCircleIcon
                     sx={{ color: "#b5e550", cursor: "pointer", fontSize: 30 }}
                     onClick={() => {
@@ -133,12 +132,7 @@ export default function Products() {
                 <th style={{ maxWidth: "200px" }}>Description</th>
                 <th>Brand</th>
                 <th>Category</th>
-                {/* <th>Sizes</th>
-                <th>Colors</th> */}
                 <th>Active Status</th>
-                {/* <th>Stock</th>
-                <th>Price</th>
-                <th>Old price</th> */}
                 <th>Is new</th>
                 <th>Is sold</th>
                 <th>In sale</th>
@@ -185,10 +179,10 @@ export default function Products() {
                     <Switch
                       defaultChecked={item.isActive ? true : false}
                       onClick={(e) => {
-                        console.log(e);
+                        console.log(e.target.checked);
                         instance
                           .put(`products/${item.id}`, {
-                            isActive: !item.isActive,
+                            isActive: e.target.checked,
                           })
                           .then((response) => {
                             console.log(response);

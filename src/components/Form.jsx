@@ -39,6 +39,14 @@ import {
   updateCollectionInitialValues,
 } from "../utils/schemas/updateCollection.js";
 import {
+  createContent,
+  createContentInitialValues,
+} from "../utils/schemas/createContent.js";
+import {
+  updateContent,
+  updateContentInitialValues,
+} from "../utils/schemas/updateContent.js";
+import {
   createSubCategory,
   createSubCategoryInitialValues,
 } from "../utils/schemas/createSubCategory.js";
@@ -324,6 +332,38 @@ export default function Form({
         };
         method = "put";
         break;
+      case "content_create":
+        endpoint = "/collections";
+        body = {
+          name: {
+            en: values.nameEn,
+            ar: values.nameAr,
+          },
+          description: {
+            en: values.descriptionEn,
+            ar: values.descriptionAr,
+          },
+          isActive: values.isActive,
+          images: values.images,
+        };
+        method = "post";
+        break;
+      case "content_update":
+        endpoint = `/collections/${currentId}`;
+        body = {
+          name: {
+            en: values.nameEn,
+            ar: values.nameAr,
+          },
+          description: {
+            en: values.descriptionEn,
+            ar: values.descriptionAr,
+          },
+          isActive: values.isActive,
+          images: values.images,
+        };
+        method = "put";
+        break;
       case "category_create":
         endpoint = "/categories";
         body = {
@@ -476,6 +516,8 @@ export default function Form({
           type === "product_variant_update" ||
           type === "collection_create" ||
           type === "collection_update" ||
+          type === "content_create" ||
+          type === "content_update" ||
           type === "category_create" ||
           type === "category_update" ||
           type === "subcategory_create" ||
@@ -539,6 +581,14 @@ export default function Form({
       initialValues = updateCollectionInitialValues;
       schema = updateCollection;
       break;
+    case "content_create":
+      initialValues = createContentInitialValues;
+      schema = createContent;
+      break;
+    case "content_update":
+      initialValues = updateContentInitialValues;
+      schema = updateContent;
+      break;
     case "category_create":
       initialValues = createCategoryInitialValues;
       schema = createCategory;
@@ -555,7 +605,6 @@ export default function Form({
       initialValues = createSubCategoryInitialValues;
       schema = createSubCategory;
       break;
-
     case "brand_create":
       initialValues = createBrandInitialValues;
       schema = createBrand;
@@ -713,6 +762,27 @@ export default function Form({
       if (type === "collection_update") {
         instance
           .get(`collections/${currentId}`, {
+            params: {
+              // all: true,
+            },
+          })
+          .then((response) => {
+            const res = response.data.data;
+            console.log(response.data.data);
+            setFieldValue("nameEn", res.name);
+            setFieldValue("nameAr", res.name);
+            setFieldValue("descriptionEn", res.description);
+            setFieldValue("descriptionAr", res.description);
+            setFieldValue("images", res.images);
+            setFieldValue("isActive", true);
+          })
+          .catch((error) => {
+            console.error("API Error:", error);
+          });
+      }
+      if (type === "content_update") {
+        instance
+          .get(`contents/${currentId}`, {
             params: {
               // all: true,
             },
@@ -2275,6 +2345,274 @@ export default function Form({
         </>
       )}
       {type === "collection_update" && (
+        <>
+          <div className={styles.title}>Update a collection</div>
+
+          {/* nameEn */}
+          <div className={styles.label}>
+            <span>English name</span>
+            <span className={styles.error}> *</span>
+            {errors.nameEn && touched.nameEn && (
+              <span className="error">{errors.nameEn}</span>
+            )}
+          </div>
+          <input
+            value={values.nameEn}
+            onChange={handleChange}
+            id="nameEn"
+            type="nameEn"
+            onBlur={handleBlur}
+            className={
+              errors.nameEn && touched.nameEn
+                ? `${styles.input} ${styles.bottom_margin} input-error`
+                : `${styles.input} ${styles.bottom_margin}`
+            }
+            placeholder="Your last name"
+          ></input>
+          {/* nameAr */}
+          <div className={styles.label}>
+            <span>Arabic name</span>
+            <span className={styles.error}> *</span>
+            {errors.nameAr && touched.nameAr && (
+              <span className="error">{errors.nameAr}</span>
+            )}
+          </div>
+          <input
+            value={values.nameAr}
+            onChange={handleChange}
+            id="nameAr"
+            type="nameAr"
+            onBlur={handleBlur}
+            className={
+              errors.nameAr && touched.nameAr
+                ? `${styles.input} ${styles.bottom_margin} input-error`
+                : `${styles.input} ${styles.bottom_margin}`
+            }
+            placeholder="Your last name"
+          ></input>
+          {/* status */}
+          <div className={styles.label}>
+            <span>Active status</span>
+            <span className={styles.error}> *</span>
+            {errors.email && touched.email && (
+              <span className="error">{errors.email}</span>
+            )}
+          </div>
+          <Switch
+            checked={values.isActive}
+            onClick={(event) => {
+              console.log(event.target.checked);
+              setFieldValue("isActive", !values.isActive);
+            }}
+            id="isActive"
+            type="isActive"
+            // onBlur={handleBlur}
+            inputProps={{ "aria-label": "controlled" }}
+          />
+          {/* upload image*/}
+          <div className={styles.label}>
+            <span>Upload file</span>
+            <span className={styles.error}> *</span>
+            {errors.images && touched.images && (
+              <span className="error">{errors.images}</span>
+            )}
+          </div>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "5px",
+            }}
+          >
+            <label
+              style={{
+                opacity: isUploading ? ".3" : "initial",
+                pointerEvents: isUploading ? "none" : "initial",
+                cursor: isUploading ? "not-allowed" : "pointer",
+              }}
+            >
+              {/* <img src="/upload.png" width="30px" /> */}
+              <input
+                multiple
+                type="file"
+                name="file"
+                onChange={handleFileChange}
+                style={{ width: "180px" }}
+              />
+            </label>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              {isUploading && <CircularProgress size="20px" />}
+              {isUploaded && <CloudDoneIcon sx={{ color: "green" }} />}
+            </Box>
+          </div>
+
+          <button className={styles.brown_button} type="submit">
+            Update
+          </button>
+        </>
+      )}
+      {type === "content_create" && (
+        <>
+          <div className={styles.title}>Create a content</div>
+
+          {/* nameEn */}
+          <div className={styles.label}>
+            <span>English name</span>
+            <span className={styles.error}> *</span>
+            {errors.nameEn && touched.nameEn && (
+              <span className="error">{errors.nameEn}</span>
+            )}
+          </div>
+          <input
+            value={values.nameEn}
+            onChange={handleChange}
+            id="nameEn"
+            type="nameEn"
+            onBlur={handleBlur}
+            className={
+              errors.nameEn && touched.nameEn
+                ? `${styles.input} ${styles.bottom_margin} input-error`
+                : `${styles.input} ${styles.bottom_margin}`
+            }
+            placeholder="Your last name"
+          ></input>
+          {/* nameAr */}
+          <div className={styles.label}>
+            <span>Arabic name</span>
+            <span className={styles.error}> *</span>
+            {errors.nameAr && touched.nameAr && (
+              <span className="error">{errors.nameAr}</span>
+            )}
+          </div>
+          <input
+            value={values.nameAr}
+            onChange={handleChange}
+            id="nameAr"
+            type="nameAr"
+            onBlur={handleBlur}
+            className={
+              errors.nameAr && touched.nameAr
+                ? `${styles.input} ${styles.bottom_margin} input-error`
+                : `${styles.input} ${styles.bottom_margin}`
+            }
+            placeholder="Your last name"
+          ></input>
+          {/* descriptionEn */}
+          <div className={styles.label}>
+            <span>English Description</span>
+            <span className={styles.error}> *</span>
+            {errors.descriptionEn && touched.descriptionEn && (
+              <span className="error">{errors.descriptionEn}</span>
+            )}
+          </div>
+          <input
+            value={values.descriptionEn}
+            onChange={handleChange}
+            id="descriptionEn"
+            type="descriptionEn"
+            onBlur={handleBlur}
+            className={
+              errors.descriptionEn && touched.descriptionEn
+                ? `${styles.input} ${styles.bottom_margin} input-error`
+                : `${styles.input} ${styles.bottom_margin}`
+            }
+            placeholder="Your last name"
+          ></input>
+          {/* descriptionAr */}
+          <div className={styles.label}>
+            <span>Arabic Description</span>
+            <span className={styles.error}> *</span>
+            {errors.descriptionAr && touched.descriptionAr && (
+              <span className="error">{errors.descriptionAr}</span>
+            )}
+          </div>
+          <input
+            value={values.descriptionAr}
+            onChange={handleChange}
+            id="descriptionAr"
+            type="descriptionAr"
+            onBlur={handleBlur}
+            className={
+              errors.descriptionAr && touched.descriptionAr
+                ? `${styles.input} ${styles.bottom_margin} input-error`
+                : `${styles.input} ${styles.bottom_margin}`
+            }
+            placeholder="Your last name"
+          ></input>
+          {/* status */}
+          <div className={styles.label}>
+            <span>Active status</span>
+            <span className={styles.error}> *</span>
+            {errors.email && touched.email && (
+              <span className="error">{errors.email}</span>
+            )}
+          </div>
+          <Switch
+            checked={values.isActive}
+            onClick={(event) => {
+              console.log(event.target.checked);
+              setFieldValue("isActive", !values.isActive);
+            }}
+            id="isActive"
+            type="isActive"
+            // onBlur={handleBlur}
+            inputProps={{ "aria-label": "controlled" }}
+          />
+          {/* upload image*/}
+          <div className={styles.label}>
+            <span>Upload file</span>
+            <span className={styles.error}> *</span>
+            {errors.images && touched.images && (
+              <span className="error">{errors.images}</span>
+            )}
+          </div>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "5px",
+            }}
+          >
+            <label
+              style={{
+                opacity: isUploading ? ".3" : "initial",
+                pointerEvents: isUploading ? "none" : "initial",
+                cursor: isUploading ? "not-allowed" : "pointer",
+              }}
+            >
+              {/* <img src="/upload.png" width="30px" /> */}
+              <input
+                multiple
+                type="file"
+                name="file"
+                onChange={handleFileChange}
+                style={{ width: "180px" }}
+              />
+            </label>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              {isUploading && <CircularProgress size="20px" />}
+              {isUploaded && <CloudDoneIcon sx={{ color: "green" }} />}
+            </Box>
+          </div>
+
+          <button className={styles.brown_button} type="submit">
+            Create
+          </button>
+        </>
+      )}
+      {type === "content_update" && (
         <>
           <div className={styles.title}>Update a collection</div>
 

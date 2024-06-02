@@ -1,13 +1,10 @@
 import React, { useState, useEffect } from "react";
 import logo from "../assets/logo.png";
 import MySwitch from "../components/MySwitch.jsx";
-import Switch from "@mui/material/Switch";
-import { notifySuccess, notifyError } from "../utils/general.js";
-
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-import "./products.css";
+import "./collections.css";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import i18n from "../locals/i18n.js";
@@ -25,11 +22,13 @@ import Sidebar from "../components/Sidebar.jsx";
 import DialogTitle from "@mui/material/DialogTitle";
 import Slide from "@mui/material/Slide";
 import instance from "../utils/interceptor.js";
+import Switch from "@mui/material/Switch";
+import { notifySuccess, notifyError } from "../utils/general.js";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
-export default function Products() {
+export default function Contents() {
   const [categories, setCategories] = useState("");
   const [totalPages, setTotalPages] = useState(1);
   const [page, setPage] = useState(1);
@@ -39,7 +38,7 @@ export default function Products() {
   const [data, setData] = useState([]);
   console.log(data);
   const [open, setOpen] = useState(false);
-  const [popupType, setPopupType] = useState("product_create");
+  const [popupType, setPopupType] = useState("collection_create");
   // ***
   const [dialogOpen, setDialogOpen] = React.useState(false);
 
@@ -47,7 +46,7 @@ export default function Products() {
     setIsLoading(true);
     setDialogOpen(false);
     instance
-      .delete(`categories/${currentId}`)
+      .delete(`collections/${currentId}`)
       .then((response) => {
         console.log(response);
         setData([]);
@@ -67,7 +66,7 @@ export default function Products() {
   useEffect(() => {
     if (data.length == 0) {
       instance
-        .get("categories", {
+        .get("contents", {
           params: {
             items: 5,
             page: page,
@@ -126,12 +125,13 @@ export default function Products() {
                   <AddCircleIcon
                     sx={{ color: "#b5e550", cursor: "pointer", fontSize: 30 }}
                     onClick={() => {
-                      setPopupType("category_create");
+                      setPopupType("collection_create");
                       setOpen(true);
                     }}
                   />
                 </th>
                 <th>Name</th>
+                <th>Description</th>
                 <th>Active Status</th>
                 <th>Images</th>
               </tr>
@@ -156,7 +156,7 @@ export default function Products() {
                           }}
                           onClick={() => {
                             setCurrentId(item.id);
-                            setPopupType("category_update");
+                            setPopupType("collection_update");
                             setOpen(true);
                           }}
                         />
@@ -170,12 +170,13 @@ export default function Products() {
                       </div>
                     </td>
                     <td>{item.name.en}</td>
+                    <td>{item.description.en}</td>
                     <Switch
                       defaultChecked={item.isActive ? true : false}
                       onClick={(e) => {
                         console.log(e);
                         instance
-                          .put(`categories/${item.id}`, {
+                          .put(`collections/${item.id}`, {
                             isActive: e.target.checked,
                           })
                           .then((response) => {

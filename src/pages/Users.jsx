@@ -139,7 +139,7 @@ export default function Products() {
             <tbody>
               {!isLoading &&
                 data?.map((item) => (
-                  <tr>
+                  <tr key={item.id}>
                     <td>
                       <div
                         style={{
@@ -187,7 +187,7 @@ export default function Products() {
                         console.log(e);
                         instance
                           .put(`users/${item.id}`, {
-                            isActive: !item.isActive,
+                            isActive: e.target.checked,
                           })
                           .then((response) => {
                             console.log(response);

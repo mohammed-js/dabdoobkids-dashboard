@@ -172,7 +172,7 @@ export default function Products() {
                         console.log(e);
                         instance
                           .put(`brands/${item.id}`, {
-                            isActive: !item.isActive,
+                            isActive: e.target.checked,
                           })
                           .then((response) => {
                             console.log(response);
