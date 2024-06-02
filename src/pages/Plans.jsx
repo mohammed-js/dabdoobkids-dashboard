@@ -23,7 +23,8 @@ import { format } from "date-fns";
 import DialogTitle from "@mui/material/DialogTitle";
 import Slide from "@mui/material/Slide";
 import instance from "../utils/interceptor.js";
-
+import Switch from "@mui/material/Switch";
+import { notifySuccess, notifyError } from "../utils/general.js";
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
@@ -69,6 +70,7 @@ export default function Orders() {
           params: {
             items: 5,
             page: page,
+            all: true,
           },
         })
         .then((response) => {
@@ -133,6 +135,7 @@ export default function Orders() {
                 <th>Plan Description</th>
                 <th>Duration</th>
                 <th>Price</th>
+                <th>Active Status</th>
               </tr>
             </thead>
             <tbody>
@@ -174,6 +177,24 @@ export default function Orders() {
                     <td>{item.description.en}</td>
                     <td>{item.duration}</td>
                     <td>{item.price}</td>
+                    <Switch
+                      defaultChecked={item.isActive ? true : false}
+                      onClick={(e) => {
+                        console.log(e);
+                        instance
+                          .put(`plans/${item.id}`, {
+                            isActive: !item.isActive,
+                          })
+                          .then((response) => {
+                            console.log(response);
+                            // setForceUpdate((prev) => !prev);
+                            notifySuccess("Successfully updated!");
+                          })
+                          .catch((error) => {
+                            notifyError("Error encountered!");
+                          });
+                      }}
+                    />
                   </tr>
                 ))}
               {isLoading && (

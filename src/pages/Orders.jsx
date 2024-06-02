@@ -74,6 +74,7 @@ export default function Orders() {
           params: {
             items: 5,
             page: page,
+            all: true,
           },
         })
         .then((response) => {
@@ -121,19 +122,6 @@ export default function Orders() {
           <table class="stunning-table">
             <thead>
               <tr>
-                <th
-                  style={{ display: "flex", alignItems: "center", gap: "10px" }}
-                >
-                  <span>Control</span>
-
-                  {/* <AddCircleIcon
-                    sx={{ color: "#fff", cursor: "pointer", fontSize: 30 }}
-                    onClick={() => {
-                      setPopupType("user_create");
-                      setOpen(true);
-                    }}
-                  /> */}
-                </th>
                 <th>Order Id</th>
                 <th>Order Reference</th>
                 <th>User Id</th>
@@ -153,36 +141,6 @@ export default function Orders() {
               {!isLoading &&
                 data?.map((item) => (
                   <tr>
-                    <td>
-                      <div
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "5px",
-                        }}
-                      >
-                        <EditIcon
-                          sx={{
-                            color: "orange",
-                            cursor: "pointer",
-                            fontSize: 30,
-                          }}
-                          onClick={() => {
-                            setCurrentId(item.id);
-                            setPopupType("user_update");
-                            setOpen(true);
-                          }}
-                        />
-                        {/* <DeleteIcon
-                          sx={{ color: "red", cursor: "pointer", fontSize: 30 }}
-                          onClick={() => {
-                            setDialogOpen(true);
-                            setCurrentId(item.id);
-                          }}
-                        /> */}
-                      </div>
-                    </td>
-                    {/* <td>{item.email}</td> */}
                     <td>{item.id}</td>
                     <td>{item.orderReference}</td>
                     <td>{item.user}</td>
@@ -233,8 +191,9 @@ export default function Orders() {
                               });
                           }}
                         >
-                          <MenuItem value="Initiated">Initiated</MenuItem>
-                          <MenuItem value="Pending">Pending</MenuItem>
+                          <MenuItem value="Pending" disabled>
+                            Pending
+                          </MenuItem>
                           <MenuItem value="Paid">Paid</MenuItem>
                           <MenuItem value="Failed">Failed</MenuItem>
                           <MenuItem value="Refunded">Refunded</MenuItem>
