@@ -110,6 +110,7 @@ export default function Form({
   const theme = useTheme();
 
   const [order, setOrder] = useState(null);
+  console.log("88888888888888888888888888", order);
   const [items, setItems] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
   const [isUploaded, setIsUploaded] = useState(false);
@@ -531,10 +532,16 @@ export default function Form({
         body = {
           ...values,
           weight: +values.weight,
-          packageSerial: +values.packageSerial,
+          // packageSerial: +values.packageSerial,
           buildingNo: +values.buildingNo,
           floorNo: +values.floorNo,
           apartmentNo: +values.apartmentNo,
+          items: order.items.map((item) => ({
+            id: item.id,
+            weight: +item.weight,
+            category: item.category,
+            notes: item.notes,
+          })),
         };
         method = "post";
         break;
@@ -581,9 +588,11 @@ export default function Form({
         }
       })
       .catch((error) => {
+        console.log("hhhhhhhhhhhhhhhhhhh", error.message);
         notifyError(
           error.response?.data?.errors[0]?.message ||
-            error.response?.data?.message
+            error.response?.data?.message ||
+            error?.message
         );
       });
   };
@@ -998,6 +1007,15 @@ export default function Form({
         .catch((error) => {
           console.error("API Error:", error);
         });
+      instance
+        .get("/categories", {
+          params: { paginated: false },
+        })
+        .then((response) => {
+          // setCategories(response.data.data.categories);
+          setCategories(response.data.data);
+        })
+        .catch((error) => {});
     }
   }, []);
   return (
@@ -1647,7 +1665,6 @@ export default function Form({
       {type === "product_variant_create" && (
         <>
           <div className={styles.title}>Create a product variant</div>
-
           {/* products */}
           <div className={styles.label}>
             <span>Product</span>
@@ -4299,8 +4316,8 @@ export default function Form({
             placeholder="pick up due date"
           ></input>
           {/* packageSerial */}
-          <div className={styles.label}>
-            <span>Page Serial</span>
+          {/* <div className={styles.label}>
+            <span>Package Serial</span>
             <span className={styles.error}> *</span>
             {errors.packageSerial && touched.packageSerial && (
               <span className="error">{errors.packageSerial}</span>
@@ -4318,7 +4335,7 @@ export default function Form({
                 : `${styles.input} ${styles.bottom_margin}`
             }
             placeholder="pick up due date"
-          ></input>
+          ></input> */}
           {/* customerPhone */}
           <div className={styles.label}>
             <span>Customer Phone</span>
@@ -4466,44 +4483,22 @@ export default function Form({
             size="small"
             labelId="demo-select-small-label"
             id="demo-select-small"
-            value={values.governorateCode}
+            value={values.cityCode}
             onChange={(e) => {
-              setFieldValue("governorateCode", e.target.value);
+              setFieldValue("cityCode", e.target.value);
             }}
-            className={
-              errors.governorateCode && touched.governorateCode
-                ? `error-pick`
-                : ``
-            }
+            className={errors.cityCode && touched.cityCode ? `error-pick` : ``}
             sx={{ borderRadius: "8px" }}
           >
             <MenuItem value="">
               <em>None</em>
             </MenuItem>
-            {console.log(
-              lookups?.zoneList?.filter(
-                (zone) => zone.Code === values.governorateCode
-              )?.[0]
-            )}
             {lookups?.zoneList
               ?.filter((zone) => zone.Code === values.governorateCode)?.[0]
               ?.Zones.map((zone) => (
                 <MenuItem value={zone.Code}>{zone.EnName}</MenuItem>
               ))}
           </Select>
-          <input
-            value={values.cityCode}
-            onChange={handleChange}
-            id="cityCode"
-            type="cityCode"
-            onBlur={handleBlur}
-            className={
-              errors.cityCode && touched.cityCode
-                ? `${styles.input} ${styles.bottom_margin} input-error`
-                : `${styles.input} ${styles.bottom_margin}`
-            }
-            placeholder="pick up due date"
-          ></input>
           {/* district */}
           <div className={styles.label}>
             <span>District</span>
@@ -4591,12 +4586,70 @@ export default function Form({
           ></input>
 
           {/* items */}
-          {order?.items.map((item) => (
+          {order?.items.map((item, i) => (
             <Box
-              sx={{ borderRadius: "8px", border: "1px dashed #000", p: "8px" }}
+              sx={{
+                borderRadius: "8px",
+                border: "1px dashed #000",
+                p: "8px",
+                display: "flex",
+                flexDirection: "column",
+                gap: "10px",
+              }}
             >
-              <label>Id</label>
-              <input value={item.id} />
+              <div
+                style={{ display: "flex", alignItems: "center", gap: "8px" }}
+              >
+                <label style={{ width: "70px" }}>Id</label>
+                <input value={item.id} style={{ padding: "4px" }} disabled />
+              </div>
+              <div
+                style={{ display: "flex", alignItems: "center", gap: "8px" }}
+              >
+                <label style={{ width: "70px" }}>Weight</label>
+                <input
+                  value={item.weight}
+                  onChange={(e) => {
+                    const clonedOrder = JSON.parse(JSON.stringify(order));
+                    clonedOrder.items[i].weight = e.target.value;
+                    setOrder(clonedOrder);
+                  }}
+                  style={{ padding: "4px" }}
+                />
+              </div>
+              <div
+                style={{ display: "flex", alignItems: "center", gap: "8px" }}
+              >
+                <label style={{ width: "70px" }}>Category</label>
+                <select
+                  onChange={(e) => {
+                    const clonedOrder = JSON.parse(JSON.stringify(order));
+                    clonedOrder.items[i].category = e.target.value;
+                    setOrder(clonedOrder);
+                  }}
+                >
+                  <option value="" disabled selected></option>
+                  {lookups?.productCategory?.map((lookup) => (
+                    <option key={lookup.Code} value={lookup.Code}>
+                      {lookup.EnName}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div
+                style={{ display: "flex", alignItems: "center", gap: "8px" }}
+              >
+                <label style={{ width: "70px" }}>Notes</label>
+                <input
+                  value={item.notes}
+                  onChange={(e) => {
+                    const clonedOrder = JSON.parse(JSON.stringify(order));
+                    clonedOrder.items[i].notes = e.target.value;
+                    setOrder(clonedOrder);
+                  }}
+                  style={{ padding: "4px" }}
+                />
+              </div>
             </Box>
           ))}
           <button className={styles.brown_button} type="submit">

@@ -1,8 +1,7 @@
 import * as yup from "yup";
 const floatingNumber = /^[-+]?(\d*\.\d+|\d+\.?\d*)([eE][-+]?\d+)?$/;
-// floating number
-const integerNumber = /^-?\d+$/;
-// integerNumber
+const integerNumber = /^(?:\+?20)?(?:01[0-25]\d{8}|02\d{8}|03\d{7})$/;
+const phoneNumber = /^-?\d+$/;
 
 export const shipping = yup.object().shape({
   pickupDueDate: yup.string().required("Required"),
@@ -23,13 +22,14 @@ export const shipping = yup.object().shape({
     .string()
     .min(3, "At least 3 characters long")
     .required("Required"),
-  packageSerial: yup
-    .string()
-    .matches(floatingNumber, "Must be a valid number")
-    .min(3, "At least 3 characters long")
-    .required("Required"),
+  // packageSerial: yup
+  //   .string()
+  //   .matches(floatingNumber, "Must be a valid number")
+  //   .min(3, "At least 3 characters long")
+  //   .required("Required"),
   customerPhone: yup
     .string()
+    .matches(phoneNumber, "Must be a valid number")
     .min(3, "At least 3 characters long")
     .required("Required"),
   buildingNo: yup
@@ -73,7 +73,7 @@ export const shippingInitialValues = {
   description: "",
   weight: "",
   customerName: "",
-  packageSerial: "",
+  // packageSerial: "",
   customerPhone: "",
   buildingNo: "",
   street: "",

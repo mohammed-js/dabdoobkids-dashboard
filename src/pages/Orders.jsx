@@ -255,18 +255,24 @@ export default function Orders() {
                       </FormControl> */}
                     </td>
                     <td>
-                      <AddCircleIcon
-                        sx={{
-                          color: "#b5e550",
-                          cursor: "pointer",
-                          fontSize: 30,
-                        }}
-                        onClick={() => {
-                          setCurrentId(item.id);
-                          setPopupType("shipping");
-                          setOpen(true);
-                        }}
-                      />
+                      {((item.paymentMethod === "Cash on Delivery" &&
+                        item.orderStatus !== "Paid") ||
+                        (item.paymentMethod !== "Cash on Delivery" &&
+                          item.orderStatus === "Paid")) &&
+                        item.delivertStatus === "Pending" && (
+                          <AddCircleIcon
+                            sx={{
+                              color: "#b5e550",
+                              cursor: "pointer",
+                              fontSize: 30,
+                            }}
+                            onClick={() => {
+                              setCurrentId(item.id);
+                              setPopupType("shipping");
+                              setOpen(true);
+                            }}
+                          />
+                        )}
                     </td>
                     <td>{item.paymentMethod}</td>
                     <td>{item.promocode ? item.promocode : "-"}</td>
