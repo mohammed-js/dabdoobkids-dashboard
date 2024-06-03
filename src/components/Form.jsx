@@ -970,7 +970,7 @@ export default function Form({
         })
         .then((response) => {
           // setCategories(response.data.data.categories);
-          setCategories(response.data.data);
+          setCategories(response.data.data.categories);
         })
         .catch((error) => {});
       instance
@@ -978,8 +978,8 @@ export default function Form({
           params: { paginated: false },
         })
         .then((response) => {
-          // setSubcategories(response.data.data.categories);
-          setSubcategories(response.data.data);
+          setSubcategories(response.data.data.categories);
+          // setSubcategories(response.data.data);
         })
         .catch((error) => {});
       instance
@@ -987,8 +987,8 @@ export default function Form({
           params: { paginated: false },
         })
         .then((response) => {
-          // setBrands(response.data.data.brands);
-          setBrands(response.data.data);
+          setBrands(response.data.data.brands);
+          // setBrands(response.data.data);
         })
         .catch((error) => {});
     }
@@ -1186,7 +1186,7 @@ export default function Form({
               <em>None</em>
             </MenuItem>
             {brands.map((brand) => (
-              <MenuItem value={brand.id}>{brand.name.en}</MenuItem>
+              <MenuItem value={brand.id}>{brand.name}</MenuItem>
             ))}
           </Select>
           {/* category */}
@@ -1213,7 +1213,7 @@ export default function Form({
               <em>None</em>
             </MenuItem>
             {categories.map((category) => (
-              <MenuItem value={category.id}>{category.name.en}</MenuItem>
+              <MenuItem value={category.id}>{category.name}</MenuItem>
             ))}
           </Select>
           {/* subcategory */}
@@ -1242,7 +1242,7 @@ export default function Form({
               <em>None</em>
             </MenuItem>
             {subcategories.map((subcategory) => (
-              <MenuItem value={subcategory.id}>{subcategory.name.en}</MenuItem>
+              <MenuItem value={subcategory.id}>{subcategory.name}</MenuItem>
             ))}
           </Select>
           {/* barcode */}
