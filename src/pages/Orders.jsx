@@ -33,7 +33,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 export default function Orders() {
-  const [lookups, setLookups] = useState(null);
+  // const [lookups, setLookups] = useState(null);
   const [totalPages, setTotalPages] = useState(1);
   const [page, setPage] = useState(1);
   const [currentId, setCurrentId] = useState(null);
@@ -89,20 +89,20 @@ export default function Orders() {
         });
     }
   }, [forceUpdate]);
-  useEffect(() => {
-    instance
-      .get("orders/shipping/lookups", {
-        params: {
-          lookup: "All",
-        },
-      })
-      .then((response) => {
-        setLookups(response.data.data.data);
-      })
-      .catch((error) => {
-        console.error("API Error:", error);
-      });
-  }, []);
+  // useEffect(() => {
+  //   instance
+  //     .get("orders/shipping/lookups", {
+  //       params: {
+  //         lookup: "All",
+  //       },
+  //     })
+  //     .then((response) => {
+  //       setLookups(response.data.data.data);
+  //     })
+  //     .catch((error) => {
+  //       console.error("API Error:", error);
+  //     });
+  // }, []);
 
   return (
     <>
@@ -262,6 +262,7 @@ export default function Orders() {
                           fontSize: 30,
                         }}
                         onClick={() => {
+                          setCurrentId(item.id);
                           setPopupType("shipping");
                           setOpen(true);
                         }}

@@ -109,6 +109,8 @@ export default function Form({
 }) {
   const theme = useTheme();
 
+  const [order, setOrder] = useState(null);
+  const [items, setItems] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
   const [isUploaded, setIsUploaded] = useState(false);
   const [customColors, setCustomColors] = useState([]);
@@ -118,6 +120,8 @@ export default function Form({
   const [categories, setCategories] = useState([]);
   const [subcategories, setSubcategories] = useState([]);
   const [brands, setBrands] = useState([]);
+  const [lookups, setLookups] = useState(null);
+  console.log("fffffffffff", lookups);
   const [elements, setElements] = useState([
     {
       title: {
@@ -222,6 +226,8 @@ export default function Form({
             en: values.descriptionEn,
             ar: values.descriptionAr,
           },
+          barcode: values.barcode,
+          productReference: values.productReference,
           isActive: values.isActive,
           colors: values.colors,
           sizes: values.sizes,
@@ -722,6 +728,18 @@ export default function Form({
   };
   useEffect(() => {
     if (currentId) {
+      if (type === "shipping") {
+        instance
+          .get(`orders/${currentId}`)
+          .then((response) => {
+            const res = response.data.data;
+            console.log(response.data.data);
+            setOrder(res);
+          })
+          .catch((error) => {
+            console.error("API Error:", error);
+          });
+      }
       if (type === "product_update") {
         instance
           .get(`products/${currentId}`, {
@@ -960,6 +978,22 @@ export default function Form({
         })
         .catch((error) => {});
     }
+
+    if (type == "shipping") {
+      instance
+        .get("orders/shipping/lookups", {
+          params: {
+            lookup: "All",
+          },
+        })
+        .then((response) => {
+          console.log(response.data.data);
+          setLookups(response.data.data);
+        })
+        .catch((error) => {
+          console.error("API Error:", error);
+        });
+    }
   }, []);
   return (
     <form
@@ -1188,6 +1222,46 @@ export default function Form({
               <MenuItem value={subcategory.id}>{subcategory.name}</MenuItem>
             ))}
           </Select>
+          {/* barcode */}
+          <div className={styles.label}>
+            <span>Barcode</span>
+            <span className={styles.error}> *</span>
+            {errors.barcode && touched.barcode && (
+              <span className="error">{errors.barcode}</span>
+            )}
+          </div>
+          <input
+            value={values.barcode}
+            onChange={handleChange}
+            id="barcode"
+            onBlur={handleBlur}
+            className={
+              errors.barcode && touched.barcode
+                ? `${styles.input} ${styles.bottom_margin} input-error`
+                : `${styles.input} ${styles.bottom_margin}`
+            }
+            placeholder="Barcode"
+          ></input>
+          {/* productReference */}
+          <div className={styles.label}>
+            <span>ProductReference</span>
+            <span className={styles.error}> *</span>
+            {errors.productReference && touched.productReference && (
+              <span className="error">{errors.productReference}</span>
+            )}
+          </div>
+          <input
+            value={values.productReference}
+            onChange={handleChange}
+            id="productReference"
+            onBlur={handleBlur}
+            className={
+              errors.productReference && touched.productReference
+                ? `${styles.input} ${styles.bottom_margin} input-error`
+                : `${styles.input} ${styles.bottom_margin}`
+            }
+            placeholder="Product Reference"
+          ></input>
           {/* status */}
           <div className={styles.label}>
             <span>Active status</span>
@@ -4353,19 +4427,28 @@ export default function Form({
               <span className="error">{errors.governorateCode}</span>
             )}
           </div>
-          <input
+          <Select
+            size="small"
+            labelId="demo-select-small-label"
+            id="demo-select-small"
             value={values.governorateCode}
-            onChange={handleChange}
-            id="governorateCode"
-            type="governorateCode"
-            onBlur={handleBlur}
+            onChange={(e) => {
+              setFieldValue("governorateCode", e.target.value);
+            }}
             className={
               errors.governorateCode && touched.governorateCode
-                ? `${styles.input} ${styles.bottom_margin} input-error`
-                : `${styles.input} ${styles.bottom_margin}`
+                ? `error-pick`
+                : ``
             }
-            placeholder="pick up due date"
-          ></input>
+            sx={{ borderRadius: "8px" }}
+          >
+            <MenuItem value="">
+              <em>None</em>
+            </MenuItem>
+            {lookups?.zoneList?.map((governorate) => (
+              <MenuItem value={governorate.Code}>{governorate.EnName}</MenuItem>
+            ))}
+          </Select>
           {/* cityCode */}
           <div className={styles.label}>
             <span>City Code</span>
@@ -4374,6 +4457,35 @@ export default function Form({
               <span className="error">{errors.cityCode}</span>
             )}
           </div>
+          <Select
+            size="small"
+            labelId="demo-select-small-label"
+            id="demo-select-small"
+            value={values.governorateCode}
+            onChange={(e) => {
+              setFieldValue("governorateCode", e.target.value);
+            }}
+            className={
+              errors.governorateCode && touched.governorateCode
+                ? `error-pick`
+                : ``
+            }
+            sx={{ borderRadius: "8px" }}
+          >
+            <MenuItem value="">
+              <em>None</em>
+            </MenuItem>
+            {console.log(
+              lookups?.zoneList?.filter(
+                (zone) => zone.Code === values.governorateCode
+              )?.[0]
+            )}
+            {lookups?.zoneList
+              ?.filter((zone) => zone.Code === values.governorateCode)?.[0]
+              ?.Zones.map((zone) => (
+                <MenuItem value={zone.Code}>{zone.EnName}</MenuItem>
+              ))}
+          </Select>
           <input
             value={values.cityCode}
             onChange={handleChange}
@@ -4473,6 +4585,15 @@ export default function Form({
             placeholder="pick up due date"
           ></input>
 
+          {/* items */}
+          {order?.items.map((item) => (
+            <Box
+              sx={{ borderRadius: "8px", border: "1px dashed #000", p: "8px" }}
+            >
+              <label>Id</label>
+              <input value={item.id} />
+            </Box>
+          ))}
           <button className={styles.brown_button} type="submit">
             Ship
           </button>

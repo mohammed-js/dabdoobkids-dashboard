@@ -30,6 +30,14 @@ export const createProduct = yup.object().shape({
     .of(yup.string())
     .min(1, "At least one image is required")
     .required("Required"),
+  barcode: yup
+    .string()
+    .min(2, "At least 3 characters long")
+    .required("Required"),
+  productReference: yup
+    .string()
+    .min(2, "At least 3 characters long")
+    .required("Required"),
   isActive: yup.boolean(),
   // colors: yup
   //   .array()
@@ -74,6 +82,8 @@ export const createProductInitialValues = {
   descriptionEn: "",
   descriptionAr: "",
   images: [],
+  barcode: "",
+  productReference: "",
   isActive: true,
   // colors: "",
   // sizes: [],
