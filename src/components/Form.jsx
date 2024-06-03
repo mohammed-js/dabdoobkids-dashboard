@@ -1514,7 +1514,7 @@ export default function Form({
               <em>None</em>
             </MenuItem>
             {brands.map((brand) => (
-              <MenuItem value={brand.id}>{brand.name.en}</MenuItem>
+              <MenuItem value={brand.id}>{brand.name}</MenuItem>
             ))}
           </Select>
           {/* category */}
@@ -1541,7 +1541,7 @@ export default function Form({
               <em>None</em>
             </MenuItem>
             {categories.map((category) => (
-              <MenuItem value={category.id}>{category.name.en}</MenuItem>
+              <MenuItem value={category.id}>{category.name}</MenuItem>
             ))}
           </Select>
           {/* status */}
@@ -2003,7 +2003,7 @@ export default function Form({
               <em>None</em>
             </MenuItem>
             {brands.map((brand) => (
-              <MenuItem value={brand.id}>{brand.name.en}</MenuItem>
+              <MenuItem value={brand.id}>{brand.name}</MenuItem>
             ))}
           </Select>
           {/* category */}
@@ -2030,7 +2030,7 @@ export default function Form({
               <em>None</em>
             </MenuItem>
             {categories.map((category) => (
-              <MenuItem value={category.id}>{category.name.en}</MenuItem>
+              <MenuItem value={category.id}>{category.name}</MenuItem>
             ))}
           </Select>
           {/* colors */}
@@ -3241,7 +3241,7 @@ export default function Form({
               <em>Choose a category</em>
             </MenuItem>
             {categories.map((category) => (
-              <MenuItem value={category.id}>{category.name.en}</MenuItem>
+              <MenuItem value={category.id}>{category.name}</MenuItem>
             ))}
           </Select>
 
@@ -3381,7 +3381,7 @@ export default function Form({
               <em>Choose a category</em>
             </MenuItem>
             {categories.map((category) => (
-              <MenuItem value={category.id}>{category.name.en}</MenuItem>
+              <MenuItem value={category.id}>{category.name}</MenuItem>
             ))}
           </Select>
 
