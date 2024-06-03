@@ -947,7 +947,7 @@ export default function Form({
     ) {
       instance
         .get("/products", {
-          // params: { page: 1 },
+          params: { paginated: false },
         })
         .then((response) => {
           setProducts(response.data.data.products);
@@ -955,7 +955,7 @@ export default function Form({
         .catch((error) => {});
       instance
         .get("/categories", {
-          // params: { page: 1 },
+          params: { paginated: false },
         })
         .then((response) => {
           setCategories(response.data.data.categories);
@@ -963,7 +963,7 @@ export default function Form({
         .catch((error) => {});
       instance
         .get("/subcategories", {
-          // params: { page: 1 },
+          params: { paginated: false },
         })
         .then((response) => {
           setSubcategories(response.data.data.categories);
@@ -971,7 +971,7 @@ export default function Form({
         .catch((error) => {});
       instance
         .get("/brands", {
-          // params: { page: 1 },
+          params: { paginated: false },
         })
         .then((response) => {
           setBrands(response.data.data.brands);
