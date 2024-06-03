@@ -950,7 +950,9 @@ export default function Form({
           params: { paginated: false },
         })
         .then((response) => {
-          setProducts(response.data.data.products);
+          console.log("dddddddddddd", response.data.data);
+          // setProducts(response.data.data.products);
+          setProducts(response.data.data);
         })
         .catch((error) => {});
       instance
@@ -958,7 +960,8 @@ export default function Form({
           params: { paginated: false },
         })
         .then((response) => {
-          setCategories(response.data.data.categories);
+          // setCategories(response.data.data.categories);
+          setCategories(response.data.data);
         })
         .catch((error) => {});
       instance
@@ -966,7 +969,8 @@ export default function Form({
           params: { paginated: false },
         })
         .then((response) => {
-          setSubcategories(response.data.data.categories);
+          // setSubcategories(response.data.data.categories);
+          setSubcategories(response.data.data);
         })
         .catch((error) => {});
       instance
@@ -974,7 +978,8 @@ export default function Form({
           params: { paginated: false },
         })
         .then((response) => {
-          setBrands(response.data.data.brands);
+          // setBrands(response.data.data.brands);
+          setBrands(response.data.data);
         })
         .catch((error) => {});
     }
@@ -1163,7 +1168,7 @@ export default function Form({
               <em>None</em>
             </MenuItem>
             {brands.map((brand) => (
-              <MenuItem value={brand.id}>{brand.name}</MenuItem>
+              <MenuItem value={brand.id}>{brand.name.en}</MenuItem>
             ))}
           </Select>
           {/* category */}
@@ -1190,7 +1195,7 @@ export default function Form({
               <em>None</em>
             </MenuItem>
             {categories.map((category) => (
-              <MenuItem value={category.id}>{category.name}</MenuItem>
+              <MenuItem value={category.id}>{category.name.en}</MenuItem>
             ))}
           </Select>
           {/* subcategory */}
@@ -1219,7 +1224,7 @@ export default function Form({
               <em>None</em>
             </MenuItem>
             {subcategories.map((subcategory) => (
-              <MenuItem value={subcategory.id}>{subcategory.name}</MenuItem>
+              <MenuItem value={subcategory.id}>{subcategory.name.en}</MenuItem>
             ))}
           </Select>
           {/* barcode */}
@@ -1491,7 +1496,7 @@ export default function Form({
               <em>None</em>
             </MenuItem>
             {brands.map((brand) => (
-              <MenuItem value={brand.id}>{brand.name}</MenuItem>
+              <MenuItem value={brand.id}>{brand.name.en}</MenuItem>
             ))}
           </Select>
           {/* category */}
@@ -1518,7 +1523,7 @@ export default function Form({
               <em>None</em>
             </MenuItem>
             {categories.map((category) => (
-              <MenuItem value={category.id}>{category.name}</MenuItem>
+              <MenuItem value={category.id}>{category.name.en}</MenuItem>
             ))}
           </Select>
           {/* status */}
@@ -1666,7 +1671,7 @@ export default function Form({
               <em>None</em>
             </MenuItem>
             {products.map((product) => (
-              <MenuItem value={product.id}>{product.name}</MenuItem>
+              <MenuItem value={product.id}>{product.name.en}</MenuItem>
             ))}
           </Select>
           {/* color */}
@@ -1981,7 +1986,7 @@ export default function Form({
               <em>None</em>
             </MenuItem>
             {brands.map((brand) => (
-              <MenuItem value={brand.id}>{brand.name}</MenuItem>
+              <MenuItem value={brand.id}>{brand.name.en}</MenuItem>
             ))}
           </Select>
           {/* category */}
@@ -2008,7 +2013,7 @@ export default function Form({
               <em>None</em>
             </MenuItem>
             {categories.map((category) => (
-              <MenuItem value={category.id}>{category.name}</MenuItem>
+              <MenuItem value={category.id}>{category.name.en}</MenuItem>
             ))}
           </Select>
           {/* colors */}
@@ -3219,7 +3224,7 @@ export default function Form({
               <em>Choose a category</em>
             </MenuItem>
             {categories.map((category) => (
-              <MenuItem value={category.id}>{category.name}</MenuItem>
+              <MenuItem value={category.id}>{category.name.en}</MenuItem>
             ))}
           </Select>
 
@@ -3359,7 +3364,7 @@ export default function Form({
               <em>Choose a category</em>
             </MenuItem>
             {categories.map((category) => (
-              <MenuItem value={category.id}>{category.name}</MenuItem>
+              <MenuItem value={category.id}>{category.name.en}</MenuItem>
             ))}
           </Select>
 
